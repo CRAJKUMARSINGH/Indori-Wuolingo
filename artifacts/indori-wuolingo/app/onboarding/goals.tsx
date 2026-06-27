@@ -46,7 +46,7 @@ export default function GoalsScreen() {
         proficiency: selectedLevel,
         dailyGoalMinutes: selectedGoal,
       });
-      router.replace('/(tabs)/');
+      router.replace('/(tabs)' as any);
     } catch {
       setIsSubmitting(false);
     }

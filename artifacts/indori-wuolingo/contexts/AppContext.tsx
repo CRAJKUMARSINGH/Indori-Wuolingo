@@ -79,7 +79,7 @@ function checkAndUpdateStreak(progress: UserProgress): UserProgress {
 function computeBadges(progress: UserProgress): string[] {
   const earned = new Set(progress.earnedBadgeIds);
   for (const badge of BADGES) {
-    if (badge.lessonsRequired > 0 && progress.completedLessons.length >= badge.lessonsRequired) {
+    if ((badge.lessonsRequired ?? 0) > 0 && progress.completedLessons.length >= (badge.lessonsRequired ?? 0)) {
       earned.add(badge.id);
     }
     if (badge.xpRequired > 0 && progress.xp >= badge.xpRequired) {
