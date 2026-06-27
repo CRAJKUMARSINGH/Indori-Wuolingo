@@ -92,7 +92,7 @@ If any file under `app/` was touched:
 
 ## Stage 2 — Automated CI checks (GitHub Actions)
 
-Every push to a PR branch triggers the CI workflow at `.github/workflows/ci.yml`.
+Every push to a PR branch triggers the CI workflow at [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml).
 
 ### What CI runs
 

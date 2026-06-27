@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  typecheck-and-build:
+    name: Typecheck & Web Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
+      - name: Get pnpm store path
+        id: pnpm-cache
+        run: echo "store=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.store }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck all packages
+        run: pnpm run typecheck
+
+      - name: Build web export (Expo)
+        run: pnpm --filter @workspace/indori-wuolingo run build:web
+        env:
+          NODE_ENV: production
+
+  audit-content:
+    name: Content ID Uniqueness
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for duplicate exercise IDs in curriculum
+        run: |
+          FILE="artifacts/indori-wuolingo/data/curriculum.ts"
+          if [ ! -f "$FILE" ]; then
+            echo "curriculum.ts not found — skipping"
+            exit 0
+          fi
+
+          # Extract all id: '...' values and look for duplicates
+          DUPES=$(grep -oP "id: '[^']+'" "$FILE" | sort | uniq -d)
+
+          if [ -n "$DUPES" ]; then
+            echo "❌ Duplicate IDs found in curriculum.ts:"
+            echo "$DUPES"
+            exit 1
+          else
+            echo "✅ All exercise IDs are unique"
+          fi
