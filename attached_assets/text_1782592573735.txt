@@ -1,0 +1,857 @@
+ci.yml
+/workspace/.github/workflows
++33
+-0
+1
++
+name: CI
+2
++
+ 
+3
++
+on:
+4
++
+  pull_request:
+5
++
+    branches: [main]
+6
++
+  push:
+7
++
+    branches: [main]
+8
++
+ 
+9
++
+jobs:
+10
++
+  build-and-test:
+11
++
+    runs-on: ubuntu-latest
+12
++
+ 
+13
++
+    steps:
+14
++
+      - name: Checkout code
+15
++
+        uses: actions/checkout@v4
+16
++
+ 
+17
++
+      - name: Set up Node.js
+18
++
+        uses: actions/setup-node@v4
+19
++
+        with:
+20
++
+          node-version: 20
+21
++
+          cache: npm
+22
++
+ 
+23
++
+      - name: Install dependencies
+24
++
+        run: npm ci
+25
++
+ 
+26
++
+      - name: Run lint
+27
++
+        run: npm run lint --if-present
+28
++
+ 
+29
++
+      - name: Run tests
+30
++
+        run: npm test --if-present
+31
++
+ 
+32
++
+      - name: Build project
+33
++
+        run: npm run build --if-present
+
+CONTRIBUTING.md
+/workspace
++125
+-0
+1
++
+# Contributing
+2
++
+ 
+3
++
+This project is designed for a small team of 3 contributors working asynchronously with `GitHub`.
+4
++
+ 
+5
++
+## Core workflow
+6
++
+ 
+7
++
+1. Create or pick a `GitHub Issue`.
+8
++
+2. Assign the issue to yourself.
+9
++
+3. Create a branch from `main`.
+10
++
+4. Make focused changes for that issue only.
+11
++
+5. Run local checks before pushing.
+12
++
+6. Open a Pull Request.
+13
++
+7. Get at least 1 approval from another contributor.
+14
++
+8. Merge only after CI passes.
+15
++
+ 
+16
++
+## Branch naming
+17
++
+ 
+18
++
+Use one of these patterns:
+19
++
+ 
+20
++
+- `feature/short-description`
+21
++
+- `fix/short-description`
+22
++
+- `chore/short-description`
+23
++
+- `docs/short-description`
+24
++
+ 
+25
++
+Examples:
+26
++
+ 
+27
++
+- `feature/login-flow`
+28
++
+- `fix/profile-crash`
+29
++
+- `docs/api-setup`
+30
++
+ 
+31
++
+## Commit style
+32
++
+ 
+33
++
+Keep commits short and clear.
+34
++
+ 
+35
++
+Examples:
+36
++
+ 
+37
++
+- `feat: add login screen validation`
+38
++
+- `fix: prevent null profile crash`
+39
++
+- `docs: update setup guide`
+40
++
+- `chore: clean lint warnings`
+41
++
+ 
+42
++
+## Pull Request rules
+43
++
+ 
+44
++
+Each Pull Request should:
+45
++
+ 
+46
++
+- solve one issue or one small unit of work
+47
++
+- include a clear title
+48
++
+- explain what changed
+49
++
+- explain how it was tested
+50
++
+- stay reasonably small when possible
+51
++
+ 
+52
++
+## Pull Request template
+53
++
+ 
+54
++
+Use this format in Pull Requests:
+55
++
+ 
+56
++
+```md
+57
++
+## What changed
+58
++
+- 
+59
++
+ 
+60
++
+## Why
+61
++
+- 
+62
++
+ 
+63
++
+## How I tested it
+64
++
+- 
+65
++
+ 
+66
++
+## Screenshots or notes
+67
++
+- 
+68
++
+```
+69
++
+ 
+70
++
+## Review rules
+71
++
+ 
+72
++
+- at least 1 other contributor should review before merge
+73
++
+- do not self-merge major changes without review
+74
++
+- ask for re-review after significant updates
+75
++
+- keep review comments direct and specific
+76
++
+ 
+77
++
+## Local checks before push
+78
++
+ 
+79
++
+Run the checks that match the project stack.
+80
++
+ 
+81
++
+Examples:
+82
++
+ 
+83
++
+```bash
+84
++
+npm install
+85
++
+npm run lint
+86
++
+npm test
+87
++
+npm run build
+88
++
+```
+89
++
+ 
+90
++
+If the repo uses another stack, update this section to match it.
+91
++
+ 
+92
++
+## Branch protection recommendation
+93
++
+ 
+94
++
+Protect `main` with:
+95
++
+ 
+96
++
+- required Pull Requests
+97
++
+- at least 1 approval
+98
++
+- required status checks
+99
++
+- no direct pushes
+100
++
+ 
+101
++
+## Working as a 3-person team
+102
++
+ 
+103
++
+This is a simple split that works well:
+104
++
+ 
+105
++
+- Contributor 1: frontend and UI work
+106
++
+- Contributor 2: backend, APIs, and data logic
+107
++
+- Contributor 3: QA, fixes, integrations, and release support
+108
++
+ 
+109
++
+These roles can rotate. The important rule is that everyone reviews code, not just writes it.
+110
++
+ 
+111
++
+## Small-team habits
+112
++
+ 
+113
++
+- keep tasks small
+114
++
+- merge often
+115
++
+- avoid long-lived branches
+116
++
+- open draft PRs early for visibility
+117
++
+- write notes in issues instead of private chat when decisions affect the repo
+118
++
+ 
+119
++
+## What to avoid
+120
++
+ 
+121
++
+- huge PRs with unrelated changes
+122
++
+- direct pushes to `main`
+123
++
+- silent breaking changes
+124
++
+- skipping tests on shared code
+125
++
+- keeping work local for too long without opening a PR
+
+TEAM_BRANCHING_STRATEGY.md
+/workspace
++123
+-0
+1
++
+# Team Branching Strategy
+2
++
+ 
+3
++
+This strategy is optimized for a 3-contributor software team using `GitHub`.
+4
++
+ 
+5
++
+## Recommended model
+6
++
+ 
+7
++
+Use a simple `trunk-based` style with a protected `main` branch.
+8
++
+ 
+9
++
+### Branches
+10
++
+ 
+11
++
+- `main`: always stable and merge-ready
+12
++
+- short-lived feature or fix branches: used for active work only
+13
++
+ 
+14
++
+You do not need a permanent `develop` branch unless the team is shipping complex staged releases.
+15
++
+ 
+16
++
+## Why this works
+17
++
+ 
+18
++
+For a small team, the main risks are merge conflicts, hidden work, and slow reviews. Short branches reduce all three.
+19
++
+ 
+20
++
+## Standard branch flow
+21
++
+ 
+22
++
+1. Open or choose an issue.
+23
++
+2. Create a branch from `main`.
+24
++
+3. Make a focused change.
+25
++
+4. Push the branch.
+26
++
+5. Open a Pull Request.
+27
++
+6. Review and fix comments.
+28
++
+7. Merge into `main`.
+29
++
+8. Delete the branch after merge.
+30
++
+ 
+31
++
+## Branch naming
+32
++
+ 
+33
++
+Use clear prefixes:
+34
++
+ 
+35
++
+- `feature/...`
+36
++
+- `fix/...`
+37
++
+- `chore/...`
+38
++
+- `docs/...`
+39
++
+- `refactor/...`
+40
++
+ 
+41
++
+Examples:
+42
++
+ 
+43
++
+- `feature/user-onboarding`
+44
++
+- `fix/payment-timeout`
+45
++
+- `chore/update-deps`
+46
++
+- `docs/api-readme`
+47
++
+ 
+48
++
+## Merge policy
+49
++
+ 
+50
++
+Use one of these:
+51
++
+ 
+52
++
+- `Squash and merge` for most feature work
+53
++
+- `Rebase and merge` if you want a cleaner linear history
+54
++
+ 
+55
++
+For most 3-person teams, `Squash and merge` is the easiest choice.
+56
++
+ 
+57
++
+## Recommended review rule
+58
++
+ 
+59
++
+- normal changes: 1 approval required
+60
++
+- risky or shared-core changes: 2 people should look before merge
+61
++
+ 
+62
++
+## Handling parallel work
+63
++
+ 
+64
++
+If all 3 contributors are active at the same time:
+65
++
+ 
+66
++
+- one person can work on frontend
+67
++
+- one person can work on backend
+68
++
+- one person can work on tests, fixes, docs, or integration
+69
++
+ 
+70
++
+If two branches touch the same files:
+71
++
+ 
+72
++
+- merge the smaller PR first
+73
++
+- rebase the second branch on latest `main`
+74
++
+- resolve conflicts before requesting final review
+75
++
+ 
+76
++
+## Release handling
+77
++
+ 
+78
++
+If you need lightweight releases:
+79
++
+ 
+80
++
+- tag from `main`
+81
++
+- use tags like `v0.1.0`, `v0.2.0`, `v1.0.0`
+82
++
+ 
+83
++
+If you need an urgent fix:
+84
++
+ 
+85
++
+1. branch from `main` using `fix/...`
+86
++
+2. patch the issue
+87
++
+3. open PR
+88
++
+4. review quickly
+89
++
+5. merge back to `main`
+90
++
+6. tag a release if needed
+91
++
+ 
+92
++
+## Suggested repo rules
+93
++
+ 
+94
++
+Protect `main` with:
+95
++
+ 
+96
++
+- no direct pushes
+97
++
+- PR required before merge
+98
++
+- CI checks required
+99
++
+- stale branch cleanup after merge
+100
++
+ 
+101
++
+## Simple decision guide
+102
++
+ 
+103
++
+Use this approach when:
+104
++
+ 
+105
++
+- the team is 2 to 5 developers
+106
++
+- work is moving quickly
+107
++
+- releases are frequent
+108
++
+- the team wants low process overhead
+109
++
+ 
+110
++
+Use a more complex model only if:
+111
++
+ 
+112
++
+- there are multiple production environments with long QA cycles
+113
++
+- release branches are mandatory
+114
++
+- the organization already has stricter release controls
+115
++
+ 
+116
++
+## Best practice summary
+117
++
+ 
+118
++
+- branch from `main`
+119
++
+- keep branches short-lived
+120
++
+- open PRs early
+121
++
+- merge small changes often
+122
++
+- protect `main`
+123
++
+- use CI to catch obvious problems fast
