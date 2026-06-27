@@ -24,6 +24,7 @@ Welcome. This folder contains everything you need to contribute — from setting
 | [11-code-style.md](./11-code-style.md) | TypeScript conventions, component patterns |
 | [12-testing-checklist.md](./12-testing-checklist.md) | Manual test steps before every PR |
 | [13-roles-and-responsibilities.md](./13-roles-and-responsibilities.md) | The 3-role model, how to get added as a contributor |
+| [14-audit-and-merge-process.md](./14-audit-and-merge-process.md) | How every branch is audited, CI-gated, reviewed, and merged into `main` |
 
 ---
 
