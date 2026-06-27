@@ -1,8 +1,13 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "PyUamimHE_xLBpnfTmyk8"
 uri = "file://artifacts/indori-wuolingo/assets/images/icon.png"
 type = "image"
 title = "generated_image"
+
+[[outputs]]
+id = "lzpr_kvhwQpS-6Jadl3RG"
+uri = "file://CONTRIBUTORS.md"
+type = "text"
+title = "Indori-Wuolingo — Contributors Guide"
