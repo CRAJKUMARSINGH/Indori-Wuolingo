@@ -1,0 +1,1 @@
+- [Indori-Wuolingo app architecture](indori-wuolingo.md) — frontend-only Expo MVP, curriculum.ts as content CMS, AsyncStorage for all persistence
