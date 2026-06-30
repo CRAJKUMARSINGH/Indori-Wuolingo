@@ -50,3 +50,9 @@ Thumbs.db
 
 # Local Netlify folder
 .netlify
+
+# Environment variables — never commit real secrets
+.env
+.env.local
+.env.*.local
+# .env.example is intentionally NOT ignored (safe to commit)

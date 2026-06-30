@@ -8,6 +8,7 @@
     "dev:local": "pnpm exec expo start",
     "build": "pnpm run build:web",
     "build:web": "expo export --platform web",
+    "build:netlify": "vite build --config vite.config.ts",
     "build:replit-static": "node scripts/build.js",
     "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
     "typecheck": "tsc -p tsconfig.json --noEmit"
