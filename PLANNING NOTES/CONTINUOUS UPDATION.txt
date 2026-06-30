@@ -1,0 +1,12 @@
+CODE JUNCTION HAS ADDITINAL CODES >>>>
+OPEN UP TEST THEM IN INDIVIDUAL FOLDERS SO THOSE CAN BE IMPORTED TO ROOT APP OR>>>>
+CAN BE USED FOR CONTINUOUS APP UPDATION >>>>
+objective statement must be in markdown file for enterprise grade app listing all target points>>>
+use three apps one at root and two in code-junction folder >>>>
+for enriching the app >>>
+list down what u used and what not from code junct and root app.... >>>>
+i will not deploy at replit >>>prod files for netlify neded
+
+https://github.com/CRAJKUMARSINGH/Indori-Wuolingo/ >>>>in context of this app enrich this app using enclosed jewels and diamonds
+
+

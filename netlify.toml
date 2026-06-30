@@ -1,24 +1,66 @@
 [build]
-  command   = "pnpm --filter @workspace/indori-wuolingo run build:web"
-  publish   = "artifacts/indori-wuolingo/dist"
+  # Builds main Vite app + optionally copies code-junction companion apps into the output
+  command   = """
+    pnpm run typecheck:libs &&
+    pnpm --filter @workspace/indori-wuolingo run build:netlify &&
+    if [ -f artifacts/code-junction/admin/index.html ]; then
+      mkdir -p artifacts/indori-wuolingo/dist/public/admin &&
+      cp artifacts/code-junction/admin/index.html artifacts/indori-wuolingo/dist/public/admin/index.html
+    fi &&
+    if [ -f artifacts/code-junction/quiz/index.html ]; then
+      mkdir -p artifacts/indori-wuolingo/dist/public/quiz &&
+      cp artifacts/code-junction/quiz/index.html artifacts/indori-wuolingo/dist/public/quiz/index.html
+    fi
+  """
+  publish   = "artifacts/indori-wuolingo/dist/public"
+  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "20"
-  NPM_FLAGS    = "--version"
 
-# SPA fallback — every route serves index.html
+# ── Function bundler ────────────────────────────────────────────────────────
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["lib/**", "artifacts/api-server/**"]
+
+# ── Routing ────────────────────────────────────────────────────────────────
+
+# API → serverless function (must come before SPA fallback)
+[[redirects]]
+  from   = "/api/*"
+  to     = "/.netlify/functions/api"
+  status = 200
+  force  = true
+
+# Companion apps: trailing-slash versions
+[[redirects]]
+  from   = "/admin"
+  to     = "/admin/index.html"
+  status = 200
+
+[[redirects]]
+  from   = "/quiz"
+  to     = "/quiz/index.html"
+  status = 200
+
+# SPA fallback — everything else serves the main React app
 [[redirects]]
   from   = "/*"
   to     = "/index.html"
   status = 200
 
-# Cache immutable Expo static bundles
-[[headers]]
-  for = "/_expo/static/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
+# ── Cache headers ──────────────────────────────────────────────────────────
 [[headers]]
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/admin/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/quiz/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"

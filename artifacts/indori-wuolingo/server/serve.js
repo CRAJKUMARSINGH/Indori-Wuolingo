@@ -13,6 +13,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 
+const WEB_ROOT = path.resolve(__dirname, "..", "dist", "public");
 const STATIC_ROOT = path.resolve(__dirname, "..", "static-build");
 const TEMPLATE_PATH = path.resolve(__dirname, "templates", "landing-page.html");
 const basePath = (process.env.BASE_PATH || "/").replace(/\/+$/, "");
@@ -81,20 +82,31 @@ function serveLandingPage(req, res, landingPageTemplate, appName) {
   res.end(html);
 }
 
-function serveStaticFile(urlPath, res) {
-  const safePath = path.normalize(urlPath).replace(/^(\.\.(\/|\\|$))+/, "");
-  const filePath = path.join(STATIC_ROOT, safePath);
-
-  if (!filePath.startsWith(STATIC_ROOT)) {
-    res.writeHead(403);
-    res.end("Forbidden");
-    return;
-  }
-
-  if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
+function serveWebIndex(res) {
+  const indexPath = path.join(WEB_ROOT, "index.html");
+  if (!fs.existsSync(indexPath)) {
     res.writeHead(404);
     res.end("Not Found");
     return;
+  }
+
+  const html = fs.readFileSync(indexPath, "utf-8");
+  res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+  res.end(html);
+}
+
+function serveStaticFileFrom(rootDir, urlPath, res) {
+  const safePath = path.normalize(urlPath).replace(/^(\.\.(\/|\\|$))+/, "");
+  const filePath = path.join(rootDir, safePath);
+
+  if (!filePath.startsWith(rootDir)) {
+    res.writeHead(403);
+    res.end("Forbidden");
+    return true;
+  }
+
+  if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
+    return false;
   }
 
   const ext = path.extname(filePath).toLowerCase();
@@ -102,6 +114,7 @@ function serveStaticFile(urlPath, res) {
   const content = fs.readFileSync(filePath);
   res.writeHead(200, { "content-type": contentType });
   res.end(content);
+  return true;
 }
 
 const landingPageTemplate = fs.readFileSync(TEMPLATE_PATH, "utf-8");
@@ -120,13 +133,28 @@ const server = http.createServer((req, res) => {
     if (platform === "ios" || platform === "android") {
       return serveManifest(platform, res);
     }
-
-    if (pathname === "/") {
-      return serveLandingPage(req, res, landingPageTemplate, appName);
-    }
   }
 
-  serveStaticFile(pathname, res);
+  const webIndexPath = path.join(WEB_ROOT, "index.html");
+  const webAvailable = fs.existsSync(webIndexPath);
+
+  if (webAvailable) {
+    if (pathname === "/") {
+      return serveWebIndex(res);
+    }
+
+    if (serveStaticFileFrom(WEB_ROOT, pathname, res)) {
+      return;
+    }
+
+    return serveWebIndex(res);
+  }
+
+  if (pathname === "/") {
+    return serveLandingPage(req, res, landingPageTemplate, appName);
+  }
+
+  serveStaticFileFrom(STATIC_ROOT, pathname, res);
 });
 
 const port = parseInt(process.env.PORT || "3000", 10);
