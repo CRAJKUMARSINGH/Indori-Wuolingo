@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { BADGES, CURRICULUM } from '@/data/curriculum';
+import { BADGES, getCurriculumForLanguage } from '@/data/multi-language';
 
 const STORAGE_KEY_PROFILE = 'iw_user_profile';
 const STORAGE_KEY_PROGRESS = 'iw_user_progress';
@@ -195,12 +195,13 @@ export function useAppContext() {
 }
 
 export function useUnlockedLessons(): Set<string> {
-  const { progress } = useAppContext();
+  const { progress, userProfile } = useAppContext();
   const unlocked = new Set<string>();
+  const curriculum = getCurriculumForLanguage(userProfile?.targetLanguage);
 
-  for (let ui = 0; ui < CURRICULUM.length; ui++) {
-    const unit = CURRICULUM[ui];
-    const prevUnitDone = ui === 0 || CURRICULUM[ui - 1].lessons.every(l => progress.completedLessons.includes(l.id));
+  for (let ui = 0; ui < curriculum.length; ui++) {
+    const unit = curriculum[ui];
+    const prevUnitDone = ui === 0 || curriculum[ui - 1].lessons.every(l => progress.completedLessons.includes(l.id));
     if (!prevUnitDone) break;
     for (let li = 0; li < unit.lessons.length; li++) {
       const lesson = unit.lessons[li];
@@ -209,8 +210,8 @@ export function useUnlockedLessons(): Set<string> {
     }
   }
 
-  if (unlocked.size === 0 && CURRICULUM[0]?.lessons[0]) {
-    unlocked.add(CURRICULUM[0].lessons[0].id);
+  if (unlocked.size === 0 && curriculum[0]?.lessons[0]) {
+    unlocked.add(curriculum[0].lessons[0].id);
   }
 
   return unlocked;

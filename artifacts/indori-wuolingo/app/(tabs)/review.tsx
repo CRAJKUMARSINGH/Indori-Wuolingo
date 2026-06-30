@@ -5,14 +5,17 @@ import { Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, Vi
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 import { useAppContext } from '@/contexts/AppContext';
-import { CURRICULUM } from '@/data/curriculum';
+import { getLanguageByCode } from '@/data/languages';
+import { getCurriculumForLanguage } from '@/data/multi-language';
 
 export default function ReviewScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { progress } = useAppContext();
+  const { progress, userProfile } = useAppContext();
+  const selectedLanguage = getLanguageByCode(userProfile?.targetLanguage);
+  const curriculum = getCurriculumForLanguage(selectedLanguage.code);
 
-  const completedLessons = CURRICULUM.flatMap(u => u.lessons).filter(l =>
+  const completedLessons = curriculum.flatMap(u => u.lessons).filter(l =>
     progress.completedLessons.includes(l.id)
   );
 
@@ -21,7 +24,7 @@ export default function ReviewScreen() {
     .sort((a, b) => b[1].incorrect - a[1].incorrect)
     .slice(0, 10);
 
-  const nextLessonId = CURRICULUM.flatMap(u => u.lessons).find(
+  const nextLessonId = curriculum.flatMap(u => u.lessons).find(
     l => !progress.completedLessons.includes(l.id)
   )?.id;
 
@@ -29,7 +32,7 @@ export default function ReviewScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { paddingTop: Platform.OS === 'web' ? 67 : insets.top + 8, borderBottomColor: colors.border }]}>
         <Text style={[styles.title, { color: colors.foreground }]}>Practice</Text>
-        <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>Review & strengthen your Hindi</Text>
+        <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>Review & strengthen your {selectedLanguage.name}</Text>
       </View>
 
       <ScrollView
@@ -95,7 +98,7 @@ export default function ReviewScreen() {
               </View>
               <View style={styles.lessonGrid}>
                 {completedLessons.map(lesson => {
-                  const unit = CURRICULUM.find(u => u.lessons.some(l => l.id === lesson.id));
+                  const unit = curriculum.find(u => u.lessons.some(l => l.id === lesson.id));
                   return (
                     <TouchableOpacity
                       key={lesson.id}

@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 import { useAppContext } from '@/contexts/AppContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DEFAULT_LANGUAGE_CODE, getLanguageByCode } from '@/data/languages';
 
 const GOALS = [
   { minutes: 5, label: 'Casual', description: '5 min / day', icon: 'leaf' },
@@ -37,12 +38,16 @@ export default function GoalsScreen() {
     if (isSubmitting) return;
     setIsSubmitting(true);
     try {
-      const nameJson = await AsyncStorage.getItem('iw_onboarding_name');
-      const name = nameJson ? JSON.parse(nameJson) : 'Learner';
+      const [nameJson, languageJson] = await AsyncStorage.multiGet([
+        'iw_onboarding_name',
+        'iw_onboarding_target_language',
+      ]);
+      const selectedLanguage = getLanguageByCode(languageJson[1] ? JSON.parse(languageJson[1]) : DEFAULT_LANGUAGE_CODE);
+      const name = nameJson[1] ? JSON.parse(nameJson[1]) : 'Learner';
       await completeOnboarding({
         displayName: name,
         nativeLanguage: 'english',
-        targetLanguage: 'hindi',
+        targetLanguage: selectedLanguage.code,
         proficiency: selectedLevel,
         dailyGoalMinutes: selectedGoal,
       });

@@ -6,7 +6,8 @@ import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 import { useAppContext } from '@/contexts/AppContext';
-import { getLessonById, getUnitForLesson } from '@/data/curriculum';
+import { getLanguageByCode } from '@/data/languages';
+import { getCurriculumForLanguage, getLessonById, getUnitForLesson } from '@/data/multi-language';
 
 export default function LessonCompleteScreen() {
   const params = useLocalSearchParams<{
@@ -18,10 +19,12 @@ export default function LessonCompleteScreen() {
   }>();
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { completeLesson, progress } = useAppContext();
+  const { completeLesson, progress, userProfile } = useAppContext();
+  const selectedLanguage = getLanguageByCode(userProfile?.targetLanguage);
+  const curriculum = getCurriculumForLanguage(selectedLanguage.code);
 
-  const lesson = params.lessonId ? getLessonById(params.lessonId) : null;
-  const unit = params.lessonId ? getUnitForLesson(params.lessonId) : null;
+  const lesson = params.lessonId ? getLessonById(params.lessonId, curriculum) : null;
+  const unit = params.lessonId ? getUnitForLesson(params.lessonId, curriculum) : null;
 
   const xpGained = parseInt(params.xp ?? '10', 10);
   const correct = parseInt(params.correct ?? '0', 10);
@@ -73,7 +76,7 @@ export default function LessonCompleteScreen() {
         <Text style={styles.title}>
           {isAlreadyCompleted ? 'Great Review!' : 'Lesson Complete!'}
         </Text>
-        <Text style={styles.lessonName}>{lesson?.title ?? 'Lesson'} · {lesson?.titleHindi}</Text>
+        <Text style={styles.lessonName}>{selectedLanguage.name} · {lesson?.title ?? 'Lesson'} · {lesson?.titleHindi}</Text>
       </View>
 
       <View style={styles.statsRow}>

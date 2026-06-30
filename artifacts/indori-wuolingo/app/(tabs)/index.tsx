@@ -4,7 +4,8 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Platform } from '
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 import { useAppContext, useUnlockedLessons } from '@/contexts/AppContext';
-import { CURRICULUM } from '@/data/curriculum';
+import { getLanguageByCode } from '@/data/languages';
+import { getCourseTotals, getCurriculumForLanguage } from '@/data/multi-language';
 
 function StatPill({ icon, value, color }: { icon: string; value: string | number; color: string }) {
   return (
@@ -76,6 +77,12 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { userProfile, progress } = useAppContext();
   const unlockedLessons = useUnlockedLessons();
+  const selectedLanguage = getLanguageByCode(userProfile?.targetLanguage);
+  const curriculum = getCurriculumForLanguage(selectedLanguage.code);
+  const courseTotals = getCourseTotals(selectedLanguage.code);
+  const completedInTrack = curriculum
+    .flatMap(unit => unit.lessons)
+    .filter(lesson => progress.completedLessons.includes(lesson.id)).length;
 
   const xpToday = 0;
   const goalXp = Math.ceil((userProfile?.dailyGoalMinutes ?? 10) * 2);
@@ -89,7 +96,7 @@ export default function HomeScreen() {
         borderBottomColor: colors.border,
       }]}>
         <View>
-          <Text style={[styles.greeting, { color: colors.mutedForeground }]}>Namaste 🙏</Text>
+          <Text style={[styles.greeting, { color: colors.mutedForeground }]}>{selectedLanguage.script} {selectedLanguage.emoji}</Text>
           <Text style={[styles.userName, { color: colors.foreground }]}>{userProfile?.displayName ?? 'Learner'}</Text>
         </View>
         <View style={styles.stats}>
@@ -114,11 +121,20 @@ export default function HomeScreen() {
             <View style={[styles.progressFill, { width: `${dailyProgress * 100}%` as any, backgroundColor: colors.primary }]} />
           </View>
           <Text style={[styles.goalStatus, { color: colors.mutedForeground }]}>
-            {progress.completedLessons.length > 0 ? `${progress.completedLessons.length} lessons done today` : 'Start your first lesson!'}
+            {completedInTrack > 0 ? `${completedInTrack} lessons done in ${selectedLanguage.name}` : `Start your first ${selectedLanguage.name} lesson!`}
           </Text>
         </View>
 
-        {CURRICULUM.map((unit) => {
+        <View style={[styles.trackCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.trackLabel, { color: colors.foreground }]}>
+            {selectedLanguage.flag} {selectedLanguage.name} Track
+          </Text>
+          <Text style={[styles.trackMeta, { color: colors.mutedForeground }]}>
+            {courseTotals.totalUnits} units · {courseTotals.totalLessons} lessons · {courseTotals.totalExercises} exercises
+          </Text>
+        </View>
+
+        {curriculum.map((unit) => {
           const unitLessons = unit.lessons;
           const completedCount = unitLessons.filter(l => progress.completedLessons.includes(l.id)).length;
           const isUnitStarted = completedCount > 0;
@@ -182,6 +198,9 @@ const styles = StyleSheet.create({
   progressTrack: { height: 8, borderRadius: 4, overflow: 'hidden' },
   progressFill: { height: '100%', borderRadius: 4 },
   goalStatus: { fontSize: 12, fontFamily: 'Inter_400Regular' },
+  trackCard: { padding: 14, borderRadius: 14, borderWidth: 1, gap: 4 },
+  trackLabel: { fontSize: 15, fontFamily: 'Inter_700Bold' },
+  trackMeta: { fontSize: 12, fontFamily: 'Inter_400Regular' },
   unitSection: { gap: 10 },
   unitHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 14, borderWidth: 1 },
   unitBadge: { width: 36, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },

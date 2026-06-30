@@ -3,15 +3,20 @@ import { Alert, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View }
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 import { useAppContext } from '@/contexts/AppContext';
-import { BADGES, CURRICULUM } from '@/data/curriculum';
+import { getLanguageByCode } from '@/data/languages';
+import { BADGES, getCurriculumForLanguage } from '@/data/multi-language';
 
 export default function ProfileScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const { userProfile, progress, resetOnboarding } = useAppContext();
+  const selectedLanguage = getLanguageByCode(userProfile?.targetLanguage);
+  const curriculum = getCurriculumForLanguage(selectedLanguage.code);
 
-  const completedCount = progress.completedLessons.length;
-  const totalLessons = CURRICULUM.flatMap(u => u.lessons).length;
+  const completedCount = curriculum
+    .flatMap(unit => unit.lessons)
+    .filter(lesson => progress.completedLessons.includes(lesson.id)).length;
+  const totalLessons = curriculum.flatMap(u => u.lessons).length;
 
   const handleReset = () => {
     Alert.alert(
@@ -47,7 +52,7 @@ export default function ProfileScreen() {
           <View style={{ flex: 1 }}>
             <Text style={[styles.profileName, { color: colors.foreground }]}>{userProfile?.displayName ?? 'Learner'}</Text>
             <Text style={[styles.profileSub, { color: colors.mutedForeground }]}>
-              Learning Hindi · {proficiencyLabel}
+              Learning {selectedLanguage.name} · {proficiencyLabel}
             </Text>
             <Text style={[styles.profileGoal, { color: colors.primary }]}>
               {userProfile?.dailyGoalMinutes ?? 10} min/day goal
@@ -79,7 +84,7 @@ export default function ProfileScreen() {
           <View style={[styles.track, { backgroundColor: colors.muted }]}>
             <View style={[styles.fill, { width: `${(completedCount / totalLessons) * 100}%` as any, backgroundColor: colors.primary }]} />
           </View>
-          {CURRICULUM.map(unit => {
+          {curriculum.map(unit => {
             const done = unit.lessons.filter(l => progress.completedLessons.includes(l.id)).length;
             return (
               <View key={unit.id} style={styles.unitRow}>

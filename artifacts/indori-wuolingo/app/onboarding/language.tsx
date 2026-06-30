@@ -5,16 +5,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
-
-const LANGUAGES = [
-  { code: 'hindi', name: 'Hindi', script: 'हिंदी', flag: '🇮🇳', speakers: '600M+ speakers' },
-  { code: 'marathi', name: 'Marathi', script: 'मराठी', flag: '🇮🇳', speakers: '83M speakers', comingSoon: true },
-  { code: 'bengali', name: 'Bengali', script: 'বাংলা', flag: '🇮🇳', speakers: '230M speakers', comingSoon: true },
-  { code: 'tamil', name: 'Tamil', script: 'தமிழ்', flag: '🇮🇳', speakers: '75M speakers', comingSoon: true },
-  { code: 'telugu', name: 'Telugu', script: 'తెలుగు', flag: '🇮🇳', speakers: '82M speakers', comingSoon: true },
-  { code: 'kannada', name: 'Kannada', script: 'ಕನ್ನಡ', flag: '🇮🇳', speakers: '44M speakers', comingSoon: true },
-  { code: 'gujarati', name: 'Gujarati', script: 'ગુજરાતી', flag: '🇮🇳', speakers: '55M speakers', comingSoon: true },
-];
+import { LANGUAGES } from '@/data/languages';
 
 export default function LanguageScreen() {
   const colors = useColors();
@@ -37,7 +28,7 @@ export default function LanguageScreen() {
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <Text style={[styles.title, { color: colors.foreground }]}>What do you want{'\n'}to learn?</Text>
-        <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>Choose your target language</Text>
+        <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>Choose your target language from all 12 live tracks</Text>
 
         <View style={styles.nameSection}>
           <Text style={[styles.label, { color: colors.mutedForeground }]}>Your name</Text>
@@ -55,31 +46,28 @@ export default function LanguageScreen() {
           {LANGUAGES.map((lang) => (
             <TouchableOpacity
               key={lang.code}
-              onPress={() => !lang.comingSoon && setSelected(lang.code)}
+              onPress={() => setSelected(lang.code)}
               style={[
                 styles.languageCard,
                 {
                   borderColor: selected === lang.code ? colors.primary : colors.border,
                   backgroundColor: selected === lang.code ? colors.primary + '10' : colors.card,
-                  opacity: lang.comingSoon ? 0.55 : 1,
                 }
               ]}
-              activeOpacity={lang.comingSoon ? 1 : 0.75}
+              activeOpacity={0.75}
             >
               <Text style={styles.flagText}>{lang.flag}</Text>
               <View style={{ flex: 1 }}>
                 <View style={styles.langNameRow}>
                   <Text style={[styles.langName, { color: colors.foreground }]}>{lang.name}</Text>
-                  {lang.comingSoon && (
-                    <View style={[styles.soonBadge, { backgroundColor: colors.muted }]}>
-                      <Text style={[styles.soonText, { color: colors.mutedForeground }]}>Soon</Text>
-                    </View>
-                  )}
+                  <View style={[styles.soonBadge, { backgroundColor: colors.primary + '12' }]}>
+                    <Text style={[styles.soonText, { color: colors.primary }]}>Live</Text>
+                  </View>
                 </View>
                 <Text style={[styles.langScript, { color: colors.primary }]}>{lang.script}</Text>
-                <Text style={[styles.speakers, { color: colors.mutedForeground }]}>{lang.speakers}</Text>
+                <Text style={[styles.speakers, { color: colors.mutedForeground }]}>{lang.emoji} {lang.region} · {lang.speakers}</Text>
               </View>
-              {selected === lang.code && !lang.comingSoon && (
+              {selected === lang.code && (
                 <Ionicons name="checkmark-circle" size={24} color={colors.primary} />
               )}
             </TouchableOpacity>
@@ -91,7 +79,10 @@ export default function LanguageScreen() {
         <Pressable
           onPress={async () => {
             if (!selected || !name.trim()) return;
-            await AsyncStorage.setItem('iw_onboarding_name', JSON.stringify(name.trim()));
+            await AsyncStorage.multiSet([
+              ['iw_onboarding_name', JSON.stringify(name.trim())],
+              ['iw_onboarding_target_language', JSON.stringify(selected)],
+            ]);
             router.push('/onboarding/goals');
           }}
           style={({ pressed }) => [

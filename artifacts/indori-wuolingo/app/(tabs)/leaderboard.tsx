@@ -3,7 +3,8 @@ import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 import { useAppContext } from '@/contexts/AppContext';
-import { LEADERBOARD_MOCK } from '@/data/curriculum';
+import { getLanguageByCode } from '@/data/languages';
+import { LEADERBOARD_MOCK } from '@/data/multi-language';
 
 const MEDAL_COLORS = ['#FFD700', '#C0C0C0', '#CD7F32'];
 
@@ -11,6 +12,7 @@ export default function LeaderboardScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const { userProfile, progress } = useAppContext();
+  const selectedLanguage = getLanguageByCode(userProfile?.targetLanguage);
 
   const userEntry = {
     id: 'me',
@@ -33,7 +35,7 @@ export default function LeaderboardScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { paddingTop: Platform.OS === 'web' ? 67 : insets.top + 8, borderBottomColor: colors.border }]}>
         <Text style={[styles.title, { color: colors.foreground }]}>Leaderboard</Text>
-        <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>Weekly XP ranking</Text>
+        <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>Weekly XP ranking · {selectedLanguage.name}</Text>
       </View>
 
       <ScrollView

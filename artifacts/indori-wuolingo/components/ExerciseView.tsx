@@ -12,12 +12,41 @@ import {
 } from 'react-native';
 import { useColors } from '@/hooks/useColors';
 import type { Exercise, MultipleChoiceExercise, WordOrderExercise } from '@/data/curriculum';
+import { getLanguageByCode } from '@/data/languages';
+import { useAppContext } from '@/contexts/AppContext';
+import { useSpeech } from '@/hooks/useSpeech';
 
 type AnswerState = 'idle' | 'correct' | 'wrong';
 
 interface ExerciseViewProps {
   exercise: Exercise;
   onAnswer: (correct: boolean, exerciseId: string) => void;
+}
+
+function PromptSpeaker({ text }: { text: string }) {
+  const colors = useColors();
+  const { userProfile } = useAppContext();
+  const { isSpeaking, speak, stop } = useSpeech();
+  const language = getLanguageByCode(userProfile?.targetLanguage);
+
+  return (
+    <Pressable
+      onPress={() => (isSpeaking ? stop() : speak(text, language.speechLocale))}
+      style={({ pressed }) => [
+        styles.speakerBtn,
+        {
+          backgroundColor: colors.primary + '12',
+          borderColor: colors.primary + '25',
+          opacity: pressed ? 0.8 : 1,
+        },
+      ]}
+      accessibilityRole="button"
+      accessibilityLabel={isSpeaking ? 'Stop audio prompt' : 'Play audio prompt'}
+    >
+      <Ionicons name={isSpeaking ? 'stop-circle' : 'volume-high'} size={18} color={colors.primary} />
+      <Text style={[styles.speakerText, { color: colors.primary }]}>{isSpeaking ? 'Stop' : 'Listen'}</Text>
+    </Pressable>
+  );
 }
 
 function MultipleChoiceView({
@@ -72,6 +101,7 @@ function MultipleChoiceView({
   return (
     <View style={styles.container}>
       <View style={styles.promptSection}>
+        <PromptSpeaker text={exercise.promptScript ?? exercise.prompt} />
         {exercise.promptScript ? (
           <>
             <Text style={[styles.scriptText, { color: colors.primary }]}>{exercise.promptScript}</Text>
@@ -199,6 +229,7 @@ function WordOrderView({
   return (
     <View style={styles.container}>
       <View style={styles.promptSection}>
+        <PromptSpeaker text={exercise.correctSentence} />
         <Text style={[styles.promptText, { color: colors.foreground }]}>{exercise.instruction}</Text>
       </View>
 
@@ -299,6 +330,20 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     minHeight: 120,
     justifyContent: 'center',
+  },
+  speakerBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    marginBottom: 14,
+  },
+  speakerText: {
+    fontSize: 13,
+    fontFamily: 'Inter_600SemiBold',
   },
   scriptText: {
     fontSize: 44,

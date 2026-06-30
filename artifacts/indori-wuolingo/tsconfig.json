@@ -3,6 +3,7 @@
   "compilerOptions": {
     "incremental": true,
     "tsBuildInfoFile": ".tsbuildinfo",
+    "ignoreDeprecations": "5.0",
     "baseUrl": ".",
     "strict": true,
     "paths": {
@@ -12,14 +13,18 @@
     }
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "constants/**/*.ts",
+    "contexts/**/*.ts",
+    "contexts/**/*.tsx",
+    "data/**/*.ts",
+    "hooks/**/*.ts",
+    "hooks/**/*.tsx",
+    "server/**/*.ts",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ],
-  "references": [
-    {
-      "path": "../../lib/api-client-react"
-    }
   ]
 }

@@ -5,17 +5,20 @@ import { Alert, Animated, Pressable, StyleSheet, Text, View } from 'react-native
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 import { useAppContext } from '@/contexts/AppContext';
-import { getLessonById, getUnitForLesson } from '@/data/curriculum';
+import { getLanguageByCode } from '@/data/languages';
+import { getCurriculumForLanguage, getLessonById, getUnitForLesson } from '@/data/multi-language';
 import ExerciseView from '@/components/ExerciseView';
 
 export default function LessonScreen() {
   const { lessonId } = useLocalSearchParams<{ lessonId: string }>();
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { progress } = useAppContext();
+  const { progress, userProfile } = useAppContext();
+  const selectedLanguage = getLanguageByCode(userProfile?.targetLanguage);
+  const curriculum = getCurriculumForLanguage(selectedLanguage.code);
 
-  const lesson = lessonId ? getLessonById(lessonId) : null;
-  const unit = lessonId ? getUnitForLesson(lessonId) : null;
+  const lesson = lessonId ? getLessonById(lessonId, curriculum) : null;
+  const unit = lessonId ? getUnitForLesson(lessonId, curriculum) : null;
 
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [hearts, setHearts] = useState(progress.hearts);
@@ -33,6 +36,8 @@ export default function LessonScreen() {
 
   const handleAnswer = useCallback((correct: boolean, exerciseId: string) => {
     if (!lesson) return;
+    const nextWrongIds = correct ? wrongIds : [...wrongIds, exerciseId];
+
     if (!correct) {
       setHearts(h => {
         const next = Math.max(0, h - 1);
@@ -47,7 +52,7 @@ export default function LessonScreen() {
         }
         return next;
       });
-      setWrongIds(prev => [...prev, exerciseId]);
+      setWrongIds(nextWrongIds);
     } else {
       setCorrectCount(c => c + 1);
     }
@@ -62,7 +67,7 @@ export default function LessonScreen() {
           xp: String(lesson.xpReward),
           correct: String(finalCorrect),
           total: String(lesson.exercises.length),
-          wrongs: wrongIds.join(','),
+          wrongs: nextWrongIds.join(','),
         },
       } as any);
     } else {
@@ -122,7 +127,7 @@ export default function LessonScreen() {
 
       <View style={styles.lessonInfo}>
         <Text style={[styles.lessonTitle, { color: colors.mutedForeground }]}>
-          {lesson.title} · {exerciseIndex + 1} / {lesson.exercises.length}
+          {selectedLanguage.name} · {lesson.title} · {exerciseIndex + 1} / {lesson.exercises.length}
         </Text>
       </View>
 
