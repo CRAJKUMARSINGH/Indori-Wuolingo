@@ -16,68 +16,39 @@ import {
   GetUserStatsParams,
   GetUserStatsResponse,
 } from "@workspace/api-zod";
+import { parse, orNotFound, serializeUser } from "../lib/http";
 
 const router: IRouter = Router();
 
 router.post("/users", async (req, res): Promise<void> => {
-  const parsed = CreateUserBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
-  }
+  const { name } = parse(CreateUserBody, req.body);
 
   const [user] = await db
     .insert(usersTable)
-    .values({ name: parsed.data.name })
+    .values({ name })
     .returning();
 
-  res.status(201).json(
-    CreateUserResponse.parse({
-      ...user,
-      createdAt: user.createdAt.toISOString(),
-    }),
-  );
+  res.status(201).json(CreateUserResponse.parse(serializeUser(user)));
 });
 
 router.get("/users/:userId", async (req, res): Promise<void> => {
-  const params = GetUserParams.safeParse(req.params);
-  if (!params.success) {
-    res.status(400).json({ error: params.error.message });
-    return;
-  }
+  const { userId } = parse(GetUserParams, req.params);
 
-  const [user] = await db
+  const [userRow] = await db
     .select()
     .from(usersTable)
-    .where(eq(usersTable.id, params.data.userId));
+    .where(eq(usersTable.id, userId));
 
-  if (!user) {
-    res.status(404).json({ error: "User not found" });
-    return;
-  }
+  const user = orNotFound(userRow, "User");
 
-  res.json(
-    GetUserResponse.parse({
-      ...user,
-      createdAt: user.createdAt.toISOString(),
-    }),
-  );
+  res.json(GetUserResponse.parse(serializeUser(user)));
 });
 
 router.get("/users/:userId/stats", async (req, res): Promise<void> => {
-  const params = GetUserStatsParams.safeParse(req.params);
-  if (!params.success) {
-    res.status(400).json({ error: params.error.message });
-    return;
-  }
+  const { userId } = parse(GetUserStatsParams, req.params);
 
-  const { userId } = params.data;
-
-  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
-  if (!user) {
-    res.status(404).json({ error: "User not found" });
-    return;
-  }
+  const [userRow] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
+  const user = orNotFound(userRow, "User");
 
   // Count completed lessons per language
   const completedRows = await db

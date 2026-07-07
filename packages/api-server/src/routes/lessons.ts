@@ -8,25 +8,18 @@ import {
   CompleteLessonBody,
   CompleteLessonResponse,
 } from "@workspace/api-zod";
+import { parse, orNotFound, serializeExercise, serializeUser } from "../lib/http";
 
 const router: IRouter = Router();
 
 router.get("/lessons/:lessonId", async (req, res): Promise<void> => {
-  const params = GetLessonParams.safeParse(req.params);
-  if (!params.success) {
-    res.status(400).json({ error: params.error.message });
-    return;
-  }
+  const { lessonId } = parse(GetLessonParams, req.params);
 
-  const [lesson] = await db
+  const [lessonRow] = await db
     .select()
     .from(lessonsTable)
-    .where(eq(lessonsTable.id, params.data.lessonId));
-
-  if (!lesson) {
-    res.status(404).json({ error: "Lesson not found" });
-    return;
-  }
+    .where(eq(lessonsTable.id, lessonId));
+  const lesson = orNotFound(lessonRow, "Lesson");
 
   const exercises = await db
     .select()
@@ -41,11 +34,7 @@ router.get("/lessons/:lessonId", async (req, res): Promise<void> => {
       title: lesson.title,
       order: lesson.order,
       xpReward: lesson.xpReward,
-      exercises: exercises.map((e) => ({
-        ...e,
-        romanization: e.romanization ?? null,
-        nativeScript: e.nativeScript ?? null,
-      })),
+      exercises: exercises.map(serializeExercise),
     }),
   );
 });
@@ -60,23 +49,11 @@ function computeStars(correctCount: number, totalCount: number): number {
 }
 
 router.post("/lessons/:lessonId/complete", async (req, res): Promise<void> => {
-  const params = CompleteLessonParams.safeParse(req.params);
-  if (!params.success) {
-    res.status(400).json({ error: params.error.message });
-    return;
-  }
-
-  const parsedBody = CompleteLessonBody.safeParse(req.body);
-  if (!parsedBody.success) {
-    res.status(400).json({ error: parsedBody.error.message });
-    return;
-  }
-
-  const { lessonId } = params.data;
-  const { userId, correctCount } = parsedBody.data;
+  const { lessonId } = parse(CompleteLessonParams, req.params);
+  const { userId, correctCount } = parse(CompleteLessonBody, req.body);
 
   // Fetch lesson and exercises in parallel — derive totalCount server-side
-  const [[lesson], exercises, [user], [existing]] = await Promise.all([
+  const [[lessonRow], exercises, [userRow], [existing]] = await Promise.all([
     db.select().from(lessonsTable).where(eq(lessonsTable.id, lessonId)),
     db.select().from(exercisesTable).where(eq(exercisesTable.lessonId, lessonId)),
     db.select().from(usersTable).where(eq(usersTable.id, userId)),
@@ -88,14 +65,8 @@ router.post("/lessons/:lessonId/complete", async (req, res): Promise<void> => {
       ),
   ]);
 
-  if (!lesson) {
-    res.status(404).json({ error: "Lesson not found" });
-    return;
-  }
-  if (!user) {
-    res.status(404).json({ error: "User not found" });
-    return;
-  }
+  const lesson = orNotFound(lessonRow, "Lesson");
+  const user = orNotFound(userRow, "User");
 
   // Authoritative total from DB; clamp correct count to valid range
   const serverTotal = exercises.length;
@@ -147,10 +118,7 @@ router.post("/lessons/:lessonId/complete", async (req, res): Promise<void> => {
     CompleteLessonResponse.parse({
       xpEarned,
       stars,
-      user: {
-        ...updatedUser,
-        createdAt: updatedUser.createdAt.toISOString(),
-      },
+      user: serializeUser(updatedUser),
     }),
   );
 });

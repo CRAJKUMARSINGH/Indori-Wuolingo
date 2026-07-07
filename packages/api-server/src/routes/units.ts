@@ -7,17 +7,12 @@ import {
   lessonProgressTable,
 } from "@indori/db";
 import { ListUnitsForLanguageParams, ListUnitsForLanguageResponse } from "@workspace/api-zod";
+import { parse } from "../lib/http";
 
 const router: IRouter = Router();
 
 router.get("/languages/:languageId/units/:userId", async (req, res): Promise<void> => {
-  const params = ListUnitsForLanguageParams.safeParse(req.params);
-  if (!params.success) {
-    res.status(400).json({ error: params.error.message });
-    return;
-  }
-
-  const { languageId, userId } = params.data;
+  const { languageId, userId } = parse(ListUnitsForLanguageParams, req.params);
 
   const units = await db
     .select()

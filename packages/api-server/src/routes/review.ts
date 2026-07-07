@@ -10,26 +10,19 @@ import {
   GetReviewExercisesResponse,
 } from "@workspace/api-zod";
 import { sql } from "drizzle-orm";
+import { parse, serializeExercise } from "../lib/http";
 
 const router: IRouter = Router();
 
 router.post("/exercises/:exerciseId/mistake", async (req, res): Promise<void> => {
-  const params = RecordMistakeParams.safeParse(req.params);
-  if (!params.success) {
-    res.status(400).json({ error: params.error.message });
-    return;
-  }
-  const body = RecordMistakeBody.safeParse(req.body);
-  if (!body.success) {
-    res.status(400).json({ error: body.error.message });
-    return;
-  }
+  const { exerciseId } = parse(RecordMistakeParams, req.params);
+  const { userId } = parse(RecordMistakeBody, req.body);
 
   await db
     .insert(exerciseMistakesTable)
     .values({
-      userId: body.data.userId,
-      exerciseId: params.data.exerciseId,
+      userId,
+      exerciseId,
       missedCount: 1,
     })
     .onConflictDoUpdate({
@@ -44,37 +37,25 @@ router.post("/exercises/:exerciseId/mistake", async (req, res): Promise<void> =>
 });
 
 router.post("/exercises/:exerciseId/master", async (req, res): Promise<void> => {
-  const params = MasterExerciseParams.safeParse(req.params);
-  if (!params.success) {
-    res.status(400).json({ error: params.error.message });
-    return;
-  }
-  const body = MasterExerciseBody.safeParse(req.body);
-  if (!body.success) {
-    res.status(400).json({ error: body.error.message });
-    return;
-  }
+  const { exerciseId } = parse(MasterExerciseParams, req.params);
+  const { userId } = parse(MasterExerciseBody, req.body);
 
   await db
     .delete(exerciseMistakesTable)
     .where(
-      sql`${exerciseMistakesTable.userId} = ${body.data.userId} AND ${exerciseMistakesTable.exerciseId} = ${params.data.exerciseId}`,
+      sql`${exerciseMistakesTable.userId} = ${userId} AND ${exerciseMistakesTable.exerciseId} = ${exerciseId}`,
     );
 
   res.json({ ok: true });
 });
 
 router.get("/users/:userId/review", async (req, res): Promise<void> => {
-  const params = GetReviewExercisesParams.safeParse(req.params);
-  if (!params.success) {
-    res.status(400).json({ error: params.error.message });
-    return;
-  }
+  const { userId } = parse(GetReviewExercisesParams, req.params);
 
   const mistakes = await db
     .select()
     .from(exerciseMistakesTable)
-    .where(eq(exerciseMistakesTable.userId, params.data.userId))
+    .where(eq(exerciseMistakesTable.userId, userId))
     .orderBy(desc(exerciseMistakesTable.missedCount), asc(exerciseMistakesTable.lastMissedAt))
     .limit(10);
 
@@ -90,13 +71,7 @@ router.get("/users/:userId/review", async (req, res): Promise<void> => {
     .where(sql`${exercisesTable.id} = ANY(${exerciseIds})`);
 
   res.json(
-    GetReviewExercisesResponse.parse(
-      exercises.map((e) => ({
-        ...e,
-        romanization: e.romanization ?? null,
-        nativeScript: e.nativeScript ?? null,
-      })),
-    ),
+    GetReviewExercisesResponse.parse(exercises.map(serializeExercise)),
   );
 });
 
