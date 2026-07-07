@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import confetti from 'canvas-confetti';
 import { useQueryClient } from '@tanstack/react-query';
 import { ExercisePlayer } from '@/components/exercise-player';
+import { toast } from '@/hooks/use-toast';
 
 export function Lesson() {
   const [, params] = useRoute('/lesson/:lessonId');
@@ -25,12 +26,14 @@ export function Lesson() {
 
   const [isFinished, setIsFinished] = useState(false);
   const [completionResult, setCompletionResult] = useState<any>(null);
+  const [completionError, setCompletionError] = useState<string | null>(null);
   const [finalCorrectCount, setFinalCorrectCount] = useState(0);
 
   const totalExercises = lesson?.exercises.length || 0;
 
   const handleComplete = (correctCount: number, totalCount: number) => {
     setFinalCorrectCount(correctCount);
+    setCompletionError(null);
     setIsFinished(true);
     completeLesson.mutate(
       { lessonId, data: { userId: userId!, correctCount } },
@@ -45,7 +48,19 @@ export function Lesson() {
           });
           queryClient.invalidateQueries({ queryKey: ['/api/users', userId] });
           queryClient.invalidateQueries({ queryKey: ['/api/users', userId, 'languages', selectedLanguageId, 'units'] });
-        }
+        },
+        onError: (error) => {
+          const message =
+            error instanceof Error && error.message
+              ? error.message
+              : 'We could not save your progress. Please try again.';
+          setCompletionError(message);
+          toast({
+            title: 'Could not save lesson progress',
+            description: message,
+            variant: 'destructive',
+          });
+        },
       }
     );
   };
@@ -93,6 +108,25 @@ export function Lesson() {
             >
               Continue
             </button>
+          </div>
+        ) : completionError ? (
+          <div className="bg-card border-[3px] border-destructive shadow-playful rounded-3xl p-8 max-w-sm w-full space-y-6">
+            <p className="text-lg font-bold text-destructive">{completionError}</p>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => handleComplete(finalCorrectCount, totalExercises)}
+                disabled={completeLesson.isPending}
+                className="w-full btn-playful bg-primary text-white py-4 text-xl disabled:opacity-60"
+              >
+                {completeLesson.isPending ? 'Retrying...' : 'Try Again'}
+              </button>
+              <button
+                onClick={() => setLocation('/learn')}
+                className="w-full btn-playful bg-muted text-foreground py-4 text-xl"
+              >
+                Back to Learn
+              </button>
+            </div>
           </div>
         ) : (
           <div className="animate-pulse flex gap-2">
