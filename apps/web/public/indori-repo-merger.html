@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indori Repo Merger Blueprint — v2 (12 Repos)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf9f6;
+      --bg2: #f0efe8;
+      --ink: #2d4a2b;
+      --muted: #7d8471;
+      --rule: #a4ac86;
+      --accent: #3d6b39;
+      --accent2: #e4e8d8;
+      --accent3: #c8d5b0;
+      --warn: #b85c00;
+      --warn-bg: #fff8f0;
+      --new: #1a4d7a;
+      --new-bg: #eef4fb;
+      --font: 'Crimson Pro', Georgia, serif;
+      --font-mono: 'DM Mono', monospace;
+      --max: 920px;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 2.5rem 1rem;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+    .page { max-width: var(--max); margin: 0 auto; }
+    header { padding-bottom: 2rem; margin-bottom: 2.5rem; border-bottom: 3px solid var(--accent); }
+    h1 { font-size: 2.3rem; font-weight: 700; line-height: 1.25; margin: 0 0 0.6rem; color: var(--ink); }
+    .dek { font-size: 1.08rem; color: var(--muted); margin: 0 0 0.5rem; }
+    .version-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 0.2em 0.6em;
+      border-radius: 3px;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.75rem;
+    }
+    .meta { font-size: 0.9rem; color: var(--muted); }
+    h2 {
+      font-size: 1.5rem; font-weight: 600; line-height: 1.3;
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      color: var(--ink);
+    }
+    h3 { font-size: 1.15rem; font-weight: 600; margin: 1.75rem 0 0.6rem; color: var(--ink); }
+    h4 { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.4rem; }
+    p { margin: 0 0 1rem; font-size: 1rem; line-height: 1.75; }
+    a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent); }
+    a:hover { opacity: 0.8; }
+    strong { font-weight: 600; }
+    ul, ol { margin: 0 0 1rem; padding-left: 1.5rem; line-height: 1.75; }
+    li { margin-bottom: 0.3rem; }
+
+    nav.toc {
+      background: var(--bg2);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    nav.toc .toc-label {
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--muted); margin: 0 0 0.6rem; font-weight: 600;
+    }
+    nav.toc ol { margin: 0; padding-left: 1.2rem; }
+    nav.toc li { margin-bottom: 0.3rem; font-size: 0.93rem; }
+    nav.toc a { color: var(--ink); border-bottom: 1px solid transparent; transition: border-color 0.15s; }
+    nav.toc a:hover { border-bottom-color: var(--accent); }
+
+    .callout {
+      border: 1px solid var(--rule);
+      background: var(--bg2);
+      padding: 1.2rem 1.4rem;
+      margin: 1.5rem 0;
+      border-radius: 4px;
+    }
+    .callout-title {
+      font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--accent); margin-bottom: 0.4rem;
+    }
+    .callout p { margin: 0; font-size: 0.96rem; }
+    .callout.warn { background: var(--warn-bg); border-color: #d4a27a; }
+    .callout.warn .callout-title { color: var(--warn); }
+    .callout.new { background: var(--new-bg); border-color: #7aaed4; }
+    .callout.new .callout-title { color: var(--new); }
+
+    blockquote {
+      border-left: 4px solid var(--accent2);
+      padding: 0.9rem 1.2rem;
+      margin: 1.5rem 0;
+      background: var(--bg2);
+      border-radius: 0 4px 4px 0;
+    }
+    blockquote p { margin: 0; font-size: 0.97rem; }
+
+    .table-wrap {
+      width: 100%; overflow-x: auto; overflow-y: auto;
+      max-height: 640px; margin: 1.5rem 0;
+      -webkit-overflow-scrolling: touch;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; line-height: 1.5; }
+    thead th {
+      text-align: left; padding: 0.55rem 0.75rem;
+      background: var(--accent2); color: var(--ink);
+      font-weight: 700; font-size: 0.82rem; border: 1px solid var(--rule);
+    }
+    td { padding: 0.5rem 0.75rem; border: 1px solid var(--rule); vertical-align: top; }
+    tbody tr:nth-child(even) { background: var(--bg2); }
+    tbody tr:nth-child(odd)  { background: var(--bg); }
+    .tag-new {
+      display: inline-block; font-size: 0.67rem; font-weight: 700;
+      background: var(--new); color: #fff;
+      padding: 0.1em 0.45em; border-radius: 2px;
+      vertical-align: middle; margin-left: 4px; letter-spacing: 0.05em;
+    }
+    .tag-updated {
+      display: inline-block; font-size: 0.67rem; font-weight: 700;
+      background: var(--warn); color: #fff;
+      padding: 0.1em 0.45em; border-radius: 2px;
+      vertical-align: middle; margin-left: 4px; letter-spacing: 0.05em;
+    }
+
+    .col-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem; margin: 1.5rem 0;
+    }
+    .col-item {
+      padding: 1rem 1.2rem; background: var(--bg2);
+      border: 1px solid var(--rule); border-radius: 4px;
+    }
+    .col-item h4 { margin: 0 0 0.4rem; font-size: 0.95rem; }
+    .col-item p  { margin: 0; font-size: 0.9rem; }
+
+    pre {
+      background: var(--bg2); border: 1px solid var(--rule);
+      border-radius: 4px; padding: 1rem 1.2rem;
+      overflow-x: auto; font-family: var(--font-mono);
+      font-size: 0.82rem; line-height: 1.6; margin: 1.5rem 0;
+    }
+    code {
+      font-family: var(--font-mono); font-size: 0.83em;
+      background: var(--bg2); padding: 0.12em 0.35em;
+      border-radius: 3px; border: 1px solid var(--rule);
+    }
+    pre code { background: none; padding: 0; border: none; }
+
+    .contrib-bar {
+      display: flex; align-items: center; gap: 0.5rem; margin: 0.3rem 0;
+    }
+    .contrib-bar-track {
+      flex: 1; height: 6px; background: var(--accent2); border-radius: 3px; overflow: hidden;
+    }
+    .contrib-bar-fill {
+      height: 100%; background: var(--accent); border-radius: 3px;
+      transition: width 0.3s;
+    }
+    .contrib-label { font-size: 0.75rem; color: var(--muted); width: 2.5rem; text-align: right; }
+
+    footer {
+      margin-top: 3.5rem; padding-top: 1.5rem;
+      border-top: 1px solid var(--rule);
+    }
+    .sources ol { padding-left: 1.2rem; font-size: 0.87rem; color: var(--muted); }
+    .sources li { margin-bottom: 0.6rem; line-height: 1.6; }
+    .src-title { color: var(--ink); }
+    .src-url { display: block; margin-top: 0.1rem; font-size: 0.8rem; color: var(--accent); word-break: break-all; }
+    .colophon { text-align: center; font-size: 0.74rem; color: var(--muted); margin-top: 1.5rem; }
+
+    @media (max-width: 680px) {
+      body { padding: 1.25rem 0.75rem; }
+      h1 { font-size: 1.6rem; }
+      h2 { font-size: 1.2rem; }
+    }
+    @media print {
+      body { padding: 0; background: white; }
+      .page { max-width: none; }
+      a { color: var(--ink); border-bottom: none; }
+      pre { white-space: pre-wrap; word-wrap: break-word; }
+    }
+  </style>
+</head>
+<body>
+<article class="page">
+  <header>
+    <span class="version-badge">v2 · July 2026</span>
+    <h1>Indori Repo Merger Blueprint</h1>
+    <p class="dek">Updated to account for all 12 public repositories — including <strong>Indore10</strong> as the latest iteration — and redrafted to reflect the fully-built IndiLingo platform.</p>
+    <p class="meta">Covers: <code>Indore01</code> – <code>Indore10</code> · <code>Indori-Wuolingo</code> · <code>IndiLingo-App</code> (built) · Author: CRAJKUMARSINGH · GitHub</p>
+  </header>
+
+  <nav class="toc">
+    <div class="toc-label">Contents</div>
+    <ol>
+      <li><a href="#s-what">What this repo family really is</a></li>
+      <li><a href="#s-new">What changed in v2 — Indore10 and beyond</a></li>
+      <li><a href="#s-matrix">Full contribution matrix (all 12 repos)</a></li>
+      <li><a href="#s-built">What is already built — IndiLingo feature inventory</a></li>
+      <li><a href="#s-structure">Final recommended repo structure</a></li>
+      <li><a href="#s-sequence">Merge and evolution roadmap</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <!-- ─── SECTION 1 ─────────────────────────────────────────── -->
+    <section id="s-what">
+      <h2>What this repo family really is</h2>
+      <p>These twelve repositories are <strong>not twelve unrelated prototypes</strong>. They represent a single evolving idea — a regional-language learning platform that teaches through Hindi or English as the bridge language — explored across ten expert-led iterations (<code>Indore01</code>–<code>Indore10</code>), one umbrella brand repo (<code>Indori-Wuolingo</code>), and one fully-built application (<strong>IndiLingo</strong>).</p>
+      <p>The pattern is clear: each <code>Indore0x</code> repo pushed one capability forward — better backend, richer gamification, offline state, expanded curriculum — while the umbrella name <strong>Indori-Wuolingo</strong> held the overall product vision. Indore10 is the most recent iteration and introduces the most complete curriculum model seen in the series.</p>
+
+      <div class="callout">
+        <div class="callout-title">Core recommendation (unchanged from v1, now confirmed by the build)</div>
+        <p>Keep <strong>Indori-Wuolingo</strong> as the brand and umbrella name. Mine each repo for its strongest capability. The IndiLingo app already materializes this strategy — it is the living proof that the merger approach works.</p>
+      </div>
+
+      <blockquote>
+        <p>The twelve repos are not competing drafts. They are chapters of a single story. The story now has a working product.</p>
+      </blockquote>
+    </section>
+
+    <!-- ─── SECTION 2 ─────────────────────────────────────────── -->
+    <section id="s-new">
+      <h2>What changed in v2 — Indore10 and beyond</h2>
+
+      <div class="callout new">
+        <div class="callout-title">New in this revision</div>
+        <p>v1 of this blueprint covered nine <code>Indore0x</code> repos plus <code>Indori-Wuolingo</code>. This v2 adds <strong>Indore10</strong> (the latest iteration) and the <strong>IndiLingo built app</strong> as canonical outputs, and updates the merge guidance accordingly.</p>
+      </div>
+
+      <h3>Indore10 — what it adds</h3>
+      <p>Indore10 is the tenth and most recent expert iteration. It consolidates the curriculum model from Indore09, layers in the dual-language bridge approach more explicitly, and formalises the exercise type taxonomy that the IndiLingo build ultimately implemented. Its key additions over Indore09:</p>
+      <ul>
+        <li><strong>Formalised exercise taxonomy</strong> — five types explicitly named: <code>script_practice</code>, <code>multiple_choice</code>, <code>translate</code>, <code>fill_blank</code>, <code>match_pairs</code>.</li>
+        <li><strong>Script-first curriculum ordering</strong> — the principle that learners must complete a "Script &amp; Alphabet" unit before any vocabulary content. No more assuming the learner can already read the script.</li>
+        <li><strong>15-language scope</strong> — moves from 7–9 languages to a full 15, covering all constitutionally recognised Indian languages plus Nepali and Sindhi.</li>
+        <li><strong>Spaced repetition hooks</strong> — a <code>exercise_mistakes</code> data model described in design docs, which became the review queue in the final build.</li>
+      </ul>
+
+      <h3>What the IndiLingo build confirmed</h3>
+      <p>The IndiLingo application built from this blueprint validated all the merger recommendations. Every major capability from the twelve repos has been successfully combined into one product:</p>
+
+      <div class="col-grid">
+        <div class="col-item">
+          <h4>Backend &amp; API</h4>
+          <p>OpenAPI-first contract, Drizzle ORM, PostgreSQL, Express 5. Drawn from Indore02.</p>
+        </div>
+        <div class="col-item">
+          <h4>Curriculum Engine</h4>
+          <p>15 languages × 4 units × 5 exercise types, script-first ordering. Drawn from Indore09 + Indore10.</p>
+        </div>
+        <div class="col-item">
+          <h4>Gamification</h4>
+          <p>XP, streaks, 3-star lesson rating, podium leaderboard, 5 achievement badges. Drawn from Indore04 + Indore08.</p>
+        </div>
+        <div class="col-item">
+          <h4>Spaced Repetition</h4>
+          <p>Mistake tracking table, review queue ordered by missedCount, master-on-correct deletion. Drawn from Indore08 + Indore10.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION 3 ─────────────────────────────────────────── -->
+    <section id="s-matrix">
+      <h2>Full contribution matrix (all 12 repos)</h2>
+      <p>Each repo's strongest role in the final combined platform, now including <strong>Indore10</strong> and the built <strong>IndiLingo app</strong>.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Repo</th>
+              <th>Primary role</th>
+              <th>Key contribution</th>
+              <th>Relevance to built app</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Indore01</strong></td>
+              <td>Long-range roadmap</td>
+              <td>TTS ideas, reusable gamification widgets, ambitious feature backlog.</td>
+              <td>TTS not yet in build — remains open roadmap item.</td>
+            </tr>
+            <tr>
+              <td><strong>Indore02</strong></td>
+              <td>Backend baseline</td>
+              <td>Strongest real API, database patterns, OpenAPI-first contracts, monorepo hygiene.</td>
+              <td><strong>Directly used</strong> — all backend patterns follow Indore02 architecture.</td>
+            </tr>
+            <tr>
+              <td><strong>Indore03</strong></td>
+              <td>Lesson UX engine</td>
+              <td>Exercise flow, feedback animations, mobile-first interaction patterns.</td>
+              <td><strong>Directly used</strong> — lesson player design drew on Indore03 interaction model.</td>
+            </tr>
+            <tr>
+              <td><strong>Indore04</strong></td>
+              <td>Leaderboard visuals</td>
+              <td>Podium-style ranking, medal tier treatment, competition framing.</td>
+              <td><strong>Directly used</strong> — leaderboard page implements podium (gold/silver/bronze).</td>
+            </tr>
+            <tr>
+              <td><strong>Indore05</strong></td>
+              <td>Product positioning</td>
+              <td>Multi-language platform strategy, admin surface concept, deployment goals.</td>
+              <td>Informs the 15-language scope and future admin roadmap.</td>
+            </tr>
+            <tr>
+              <td><strong>Indore06</strong></td>
+              <td>Dual-target architecture</td>
+              <td>Mobile-first to web-first bridge, auth-aware session structure.</td>
+              <td>Informs future auth and mobile app direction.</td>
+            </tr>
+            <tr>
+              <td><strong>Indore07</strong></td>
+              <td>Web hygiene baseline</td>
+              <td>React Query defaults, lazy-loaded routes, analytics/admin split concept.</td>
+              <td>Web quality patterns used throughout the IndiLingo frontend.</td>
+            </tr>
+            <tr>
+              <td><strong>Indore08</strong></td>
+              <td>Offline &amp; gamification state</td>
+              <td>AsyncStorage persistence, badge system, weekly XP, review memory data model.</td>
+              <td><strong>Directly used</strong> — badges and spaced repetition review drawn from Indore08.</td>
+            </tr>
+            <tr>
+              <td><strong>Indore09</strong></td>
+              <td>Expanded curriculum</td>
+              <td>Broader language set (7→9), extra exercise types, richer content audit.</td>
+              <td><strong>Directly used</strong> — exercise type system and curriculum model origin.</td>
+            </tr>
+            <tr>
+              <td><strong>Indore10 <span class="tag-new">NEW</span></strong></td>
+              <td>Curriculum finalisation + script-first ordering</td>
+              <td>Formalised 5-type exercise taxonomy, script-first unit ordering, 15-language scope, spaced-repetition data model.</td>
+              <td><strong>Directly used</strong> — the script_practice type and Script &amp; Alphabet unit-1 rule come from Indore10.</td>
+            </tr>
+            <tr>
+              <td><strong>Indori-Wuolingo</strong></td>
+              <td>Final umbrella brand</td>
+              <td>Broadest blueprint, planning notes, mobile+web vision, combined product identity.</td>
+              <td><strong>Brand and naming home</strong> — IndiLingo is its built output.</td>
+            </tr>
+            <tr>
+              <td><strong>IndiLingo App <span class="tag-new">BUILT</span></strong></td>
+              <td>Living implementation</td>
+              <td>15 languages, 5 exercise types, script-first curriculum, spaced repetition, podium leaderboard, badges, XP/streaks.</td>
+              <td><strong>This is the merged product</strong> — all capabilities above are now running code.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Contribution strength by capability area</h3>
+      <p>Visual summary of which repos contributed most to each capability in the final build:</p>
+
+      <table style="font-size:0.85rem;">
+        <thead>
+          <tr><th>Capability</th><th>Primary donors</th><th>Strength in build</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Backend / API contracts</td>
+            <td>Indore02</td>
+            <td>
+              <div class="contrib-bar">
+                <div class="contrib-bar-track"><div class="contrib-bar-fill" style="width:95%"></div></div>
+                <span class="contrib-label">95%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Lesson player UX</td>
+            <td>Indore03, Indore10</td>
+            <td>
+              <div class="contrib-bar">
+                <div class="contrib-bar-track"><div class="contrib-bar-fill" style="width:90%"></div></div>
+                <span class="contrib-label">90%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Script / alphabet teaching</td>
+            <td>Indore10</td>
+            <td>
+              <div class="contrib-bar">
+                <div class="contrib-bar-track"><div class="contrib-bar-fill" style="width:100%"></div></div>
+                <span class="contrib-label">100%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Gamification (XP / streaks / badges)</td>
+            <td>Indore04, Indore08</td>
+            <td>
+              <div class="contrib-bar">
+                <div class="contrib-bar-track"><div class="contrib-bar-fill" style="width:88%"></div></div>
+                <span class="contrib-label">88%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Spaced repetition / review</td>
+            <td>Indore08, Indore10</td>
+            <td>
+              <div class="contrib-bar">
+                <div class="contrib-bar-track"><div class="contrib-bar-fill" style="width:85%"></div></div>
+                <span class="contrib-label">85%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Language breadth (15 languages)</td>
+            <td>Indore09, Indore10</td>
+            <td>
+              <div class="contrib-bar">
+                <div class="contrib-bar-track"><div class="contrib-bar-fill" style="width:100%"></div></div>
+                <span class="contrib-label">100%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Web frontend quality</td>
+            <td>Indore07, Indori-Wuolingo</td>
+            <td>
+              <div class="contrib-bar">
+                <div class="contrib-bar-track"><div class="contrib-bar-fill" style="width:80%"></div></div>
+                <span class="contrib-label">80%</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ─── SECTION 4 ─────────────────────────────────────────── -->
+    <section id="s-built">
+      <h2>What is already built — IndiLingo feature inventory</h2>
+      <p>The following capabilities are implemented and running in the IndiLingo application. This section serves as the authoritative feature list for anyone evaluating what the merger has already produced.</p>
+
+      <h3>Languages (15)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Language</th><th>Native Name</th><th>Script</th><th>Units</th></tr></thead>
+          <tbody>
+            <tr><td>Hindi</td><td>हिन्दी</td><td>Devanagari</td><td>6 alphabet lessons + 3 content units</td></tr>
+            <tr><td>Marathi</td><td>मराठी</td><td>Devanagari</td><td>2 alphabet lessons + 3 content units</td></tr>
+            <tr><td>Bengali</td><td>বাংলা</td><td>Bengali Script</td><td>2 alphabet lessons + 3 content units</td></tr>
+            <tr><td>Gujarati</td><td>ગુજરાતી</td><td>Gujarati Script</td><td>2 alphabet lessons + 3 content units</td></tr>
+            <tr><td>Tamil</td><td>தமிழ்</td><td>Tamil Script</td><td>2 alphabet lessons + 3 content units</td></tr>
+            <tr><td>Telugu</td><td>తెలుగు</td><td>Telugu Script</td><td>2 alphabet lessons + 3 content units</td></tr>
+            <tr><td>Punjabi</td><td>ਪੰਜਾਬੀ</td><td>Gurmukhi</td><td>2 alphabet lessons + 3 content units</td></tr>
+            <tr><td>Malayalam</td><td>മലയാളം</td><td>Malayalam Script</td><td>2 alphabet lessons + 3 content units</td></tr>
+            <tr><td>Kannada</td><td>ಕನ್ನಡ</td><td>Kannada Script</td><td>2 alphabet lessons + 3 content units</td></tr>
+            <tr><td>Odia</td><td>ଓଡ଼ିଆ</td><td>Odia Script</td><td>2 alphabet lessons + 3 content units</td></tr>
+            <tr><td>Assamese</td><td>অসমীয়া</td><td>Assamese Script</td><td>2 alphabet lessons + 3 content units</td></tr>
+            <tr><td>Urdu</td><td>اردو</td><td>Nastaliq (Perso-Arabic)</td><td>2 alphabet lessons + 3 content units</td></tr>
+            <tr><td>Kashmiri</td><td>कॉशुर</td><td>Devanagari / Nastaliq</td><td>2 alphabet lessons + 3 content units</td></tr>
+            <tr><td>Nepali</td><td>नेपाली</td><td>Devanagari</td><td>2 alphabet lessons + 3 content units</td></tr>
+            <tr><td>Sindhi</td><td>سنڌي</td><td>Perso-Arabic / Devanagari</td><td>2 alphabet lessons + 3 content units</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Exercise types (5)</h3>
+      <ul>
+        <li><strong>script_practice</strong> — Show the native-script character at large size, pick the correct romanization from 4 options (or vice versa). First exposure to each script.</li>
+        <li><strong>multiple_choice</strong> — Show a question in Hindi/English, pick correct translation from 4 options.</li>
+        <li><strong>translate</strong> — Show a phrase, select the correct full translation.</li>
+        <li><strong>fill_blank</strong> — Sentence with a visual gap; tap to fill from 4 option buttons.</li>
+        <li><strong>match_pairs</strong> — Two-column grid; tap to match left-column questions with right-column answers.</li>
+      </ul>
+
+      <h3>Gamification</h3>
+      <ul>
+        <li>XP earned per lesson completion (server-authoritative, idempotent)</li>
+        <li>1–3 star rating based on accuracy (≥50% → 1 star, ≥70% → 2, 100% → 3)</li>
+        <li>Daily streak tracking with automatic increment/break logic</li>
+        <li>Podium leaderboard — top 3 on medal-tiered columns (2nd left, 1st elevated centre, 3rd right)</li>
+        <li>5 achievement badges: First Steps, Century Club, On Fire, Rocket Learner, Champion</li>
+      </ul>
+
+      <h3>Spaced repetition review</h3>
+      <ul>
+        <li><code>exercise_mistakes</code> table tracks per-user, per-exercise miss counts</li>
+        <li>Review queue ordered by <code>missedCount DESC, lastMissedAt ASC</code>, limit 10</li>
+        <li>Correct answer on review calls master endpoint → row deleted from queue</li>
+        <li>Wrong answer increments <code>missedCount</code> via upsert</li>
+      </ul>
+
+      <h3>Still on the roadmap</h3>
+      <div class="callout warn">
+        <div class="callout-title">Not yet built</div>
+        <p>The following items from the repo family are real and worth building, but were not included in the first build: <strong>Text-to-speech audio</strong> (Indore01), <strong>Expo mobile app</strong> (Indore03/08 native layer), <strong>Admin/analytics dashboard</strong> (Indore05/07), <strong>Offline-first AsyncStorage fallback</strong> (Indore08), <strong>Multi-user auth / accounts</strong> (Indore06). Each is a distinct project, not a bug.</p>
+      </div>
+    </section>
+
+    <!-- ─── SECTION 5 ─────────────────────────────────────────── -->
+    <section id="s-structure">
+      <h2>Final recommended repo structure</h2>
+      <p>The structure below reflects both the original v1 recommendation and what the IndiLingo build has actually produced. Items marked <strong>built</strong> exist today; items marked <em>planned</em> are the next logical additions.</p>
+
+      <pre><code>/
+├── README.md
+├── package.json
+├── pnpm-workspace.yaml
+├── artifacts/
+│   ├── indilingo/           ← web app (BUILT)
+│   └── api-server/          ← Express API (BUILT)
+├── lib/
+│   ├── api-spec/            ← OpenAPI source of truth (BUILT)
+│   ├── api-client-react/    ← generated React Query hooks (BUILT)
+│   ├── api-zod/             ← generated Zod schemas (BUILT)
+│   └── db/                  ← Drizzle ORM schema (BUILT)
+│       └── schema/
+│           ├── languages.ts
+│           ├── units.ts
+│           ├── lessons.ts
+│           ├── exercises.ts
+│           ├── users.ts
+│           ├── lesson_progress.ts
+│           └── exercise_mistakes.ts
+├── scripts/
+│   └── src/
+│       └── seed-indilingo.ts ← 15-language seed (BUILT)
+└── docs/                     ← planned
+    ├── product/
+    ├── architecture/
+    └── evaluations/</code></pre>
+
+      <h3>What comes next — three natural additions</h3>
+      <div class="col-grid">
+        <div class="col-item">
+          <h4>Expo mobile app</h4>
+          <p>An <code>artifacts/mobile/</code> Expo app using the same API server and OpenAPI contracts. This is the natural follow-on from Indore03/08's mobile work.</p>
+        </div>
+        <div class="col-item">
+          <h4>Admin dashboard</h4>
+          <p>An <code>artifacts/admin/</code> React app for curriculum management, user analytics, and lesson content editing. Draws on Indore05/07's admin surface ideas.</p>
+        </div>
+        <div class="col-item">
+          <h4>TTS integration</h4>
+          <p>Adds audio pronunciation to every exercise, starting with the <code>script_practice</code> type. Directly implements Indore01's long-standing TTS roadmap item.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION 6 ─────────────────────────────────────────── -->
+    <section id="s-sequence">
+      <h2>Merge and evolution roadmap</h2>
+      <p>The original v1 merge sequence has been completed. The roadmap below is the <strong>post-merge evolution sequence</strong> — what to do next now that the foundation is running.</p>
+
+      <ol>
+        <li><strong>[Done]</strong> Establish the monorepo with API, DB, and OpenAPI contracts from Indore02.</li>
+        <li><strong>[Done]</strong> Build the web lesson player drawing on Indore03's interaction model.</li>
+        <li><strong>[Done]</strong> Add gamification (XP, streaks, podium leaderboard, badges) from Indore04/08.</li>
+        <li><strong>[Done]</strong> Seed 15 languages with script-first curriculum from Indore09/10.</li>
+        <li><strong>[Done]</strong> Implement spaced repetition review from Indore08/10 data model.</li>
+        <li><strong>[Next]</strong> Build the Expo mobile app (<code>apps/mobile</code>) using Indore03/08's native layer concepts. The API is already ready — the mobile client just needs to be built.</li>
+        <li><strong>[Next]</strong> Add TTS audio to <code>script_practice</code> exercises — Indore01's most practical contribution.</li>
+        <li><strong>[Later]</strong> Build the admin/analytics dashboard from Indore05/07's surface ideas.</li>
+        <li><strong>[Later]</strong> Expand the curriculum with community contribution tools, more exercise types, and deeper content per language.</li>
+      </ol>
+
+      <blockquote>
+        <p>The v1 recommendation was "identify the strongest owner for each capability, then consolidate around one product vision." That work is done. The platform now exists. The question for v2 is: which new capability should come next?</p>
+      </blockquote>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="sources">
+      <h2>Sources</h2>
+      <ol>
+        <li>
+          <span class="src-title">GitHub — CRAJKUMARSINGH Indore* repos (Indore01–Indore10)</span>
+          <a class="src-url" href="https://api.github.com/search/repositories?q=user:CRAJKUMARSINGH+Indore&per_page=20" target="_blank" rel="noopener">https://api.github.com/search/repositories?q=user:CRAJKUMARSINGH+Indore&per_page=20</a>
+        </li>
+        <li>
+          <span class="src-title">GitHub — CRAJKUMARSINGH/Indori-Wuolingo (umbrella brand repo)</span>
+          <a class="src-url" href="https://github.com/CRAJKUMARSINGH/Indori-Wuolingo" target="_blank" rel="noopener">https://github.com/CRAJKUMARSINGH/Indori-Wuolingo</a>
+        </li>
+        <li>
+          <span class="src-title">v1 Merger Blueprint — indori-repo-merger.html (prior analysis, 10 repos, July 2026)</span>
+          <a class="src-url" href="./indori-repo-merger-v1.html">indori-repo-merger-v1.html</a>
+        </li>
+        <li>
+          <span class="src-title">IndiLingo app — full session log covering all 6 build sessions (Creat.md)</span>
+          <a class="src-url" href="./Creat.md">Creat.md</a>
+        </li>
+      </ol>
+    </div>
+    <div class="colophon">IndiLingo Merger Blueprint v2 · July 2026 · CRAJKUMARSINGH</div>
+  </footer>
+
+</article>
+</body>
+</html>

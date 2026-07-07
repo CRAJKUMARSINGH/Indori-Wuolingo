@@ -1,33 +1,32 @@
-import { Router } from "express";
+import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
 import { usersTable } from "@workspace/db";
+import { GetLeaderboardResponse } from "@workspace/api-zod";
 import { desc } from "drizzle-orm";
 
-const router = Router();
+const router: IRouter = Router();
 
-router.get("/", async (req, res) => {
-  try {
-    const users = await db
-      .select()
-      .from(usersTable)
-      .orderBy(desc(usersTable.xp))
-      .limit(20);
+router.get("/leaderboard", async (_req, res): Promise<void> => {
+  const users = await db
+    .select({
+      id: usersTable.id,
+      name: usersTable.name,
+      xp: usersTable.xp,
+      streak: usersTable.streak,
+    })
+    .from(usersTable)
+    .orderBy(desc(usersTable.xp), desc(usersTable.streak))
+    .limit(50);
 
-    const leaderboard = users.map((u, i) => ({
-      rank: i + 1,
-      userId: u.id,
-      username: u.username,
-      displayName: u.displayName,
-      xp: u.xp,
-      streak: u.streak,
-      avatarUrl: u.avatarUrl,
-    }));
+  const entries = users.map((u, i) => ({
+    rank: i + 1,
+    userId: u.id,
+    name: u.name,
+    xp: u.xp,
+    streak: u.streak,
+  }));
 
-    res.json(leaderboard);
-  } catch (err) {
-    req.log.error({ err }, "Failed to get leaderboard");
-    res.status(500).json({ error: "Internal server error" });
-  }
+  res.json(GetLeaderboardResponse.parse(entries));
 });
 
 export default router;

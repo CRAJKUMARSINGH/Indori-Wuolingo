@@ -1,0 +1,22 @@
+{
+  "name": "@indori/curriculum",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./seed": "./src/seed-db.ts"
+  },
+  "scripts": {
+    "seed": "tsx src/seed-db.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@indori/db": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "~5.9.3"
+  }
+}

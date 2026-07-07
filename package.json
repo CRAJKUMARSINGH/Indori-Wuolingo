@@ -3,12 +3,16 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "preinstall": "node ./scripts/preinstall.mjs",
-    "dev": "pnpm --filter @workspace/indori-wuolingo run dev",
-    "serve": "pnpm --filter @workspace/indori-wuolingo run serve",
+    "preinstall": "echo preinstall skipped",
+    "dev": "pnpm --parallel --filter @indori/web --filter @indori/api-server --filter @workspace/indori-wuolingo run dev",
+    "dev:web": "pnpm --filter @indori/web run dev",
+    "dev:api": "pnpm --filter @indori/api-server run dev",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "typecheck:libs": "tsc --build",
-    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
+    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --filter \"./packages/**\" --if-present run typecheck",
+    "seed": "tsx packages/curriculum/src/seed-db.ts",
+    "test:robotic": "pnpm --filter @indori/robotic-tests run test",
+    "serve": "pnpm --filter @workspace/indori-wuolingo run serve"
   },
   "private": true,
   "dependencies": {

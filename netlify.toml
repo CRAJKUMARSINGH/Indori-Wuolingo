@@ -1,106 +1,15 @@
-# ─────────────────────────────────────────────────────────────────────────────
-# Indori-Wuolingo — Netlify Production Config
-#
-# Deploys three apps from a single repo:
-#   /        → Vite React learner app  (artifacts/indori-wuolingo)
-#   /admin   → Admin dashboard         (artifacts/code-junction/admin)
-#   /quiz    → Quick quiz              (artifacts/code-junction/quiz)
-#   /api/*   → Serverless Express API  (netlify/functions/api.ts)
-#
-# Required env vars (set in Netlify dashboard → Site settings → Env vars):
-#   DATABASE_URL    — PostgreSQL connection string
-#   SESSION_SECRET  — JWT signing secret (min 32 random chars)
-# ─────────────────────────────────────────────────────────────────────────────
-
 [build]
-  command   = """
-    pnpm run typecheck:libs &&
-    pnpm --filter @workspace/indori-wuolingo run build:netlify &&
-    if [ -f artifacts/code-junction/admin/index.html ]; then
-      mkdir -p artifacts/indori-wuolingo/dist/public/admin &&
-      cp artifacts/code-junction/admin/index.html artifacts/indori-wuolingo/dist/public/admin/index.html
-    fi &&
-    if [ -f artifacts/code-junction/quiz/index.html ]; then
-      mkdir -p artifacts/indori-wuolingo/dist/public/quiz &&
-      cp artifacts/code-junction/quiz/index.html artifacts/indori-wuolingo/dist/public/quiz/index.html
-    fi
-  """
-  publish   = "artifacts/indori-wuolingo/dist/public"
-  functions = "netlify/functions"
-
-[build.environment]
-  NODE_VERSION  = "20"
-  PNPM_VERSION  = "9"
-
-# ── Function bundler ────────────────────────────────────────────────────────
-[functions]
-  node_bundler    = "esbuild"
-  included_files  = ["lib/**", "artifacts/api-server/**"]
-
-# ── Routing ────────────────────────────────────────────────────────────────
-
-# 1. API — must come BEFORE the SPA fallback
-[[redirects]]
-  from   = "/api/*"
-  to     = "/.netlify/functions/api"
-  status = 200
-  force  = true
-
-# 2. Companion apps — trailing-slash variants
-[[redirects]]
-  from   = "/admin"
-  to     = "/admin/index.html"
-  status = 200
+  command = "npm run build:netlify"
+  publish = "artifacts/indilingo/dist"
 
 [[redirects]]
-  from   = "/quiz"
-  to     = "/quiz/index.html"
+  from = "/*"
+  to = "/index.html"
   status = 200
 
-# 3. SPA fallback — everything else serves the main React app
-[[redirects]]
-  from   = "/*"
-  to     = "/index.html"
-  status = 200
-
-# ── Cache headers ──────────────────────────────────────────────────────────
-
-# Hashed Vite assets — cache forever (immutable)
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-# HTML entry points — always revalidate
-[[headers]]
-  for = "/index.html"
-  [headers.values]
-    Cache-Control = "no-cache, no-store, must-revalidate"
-
-[[headers]]
-  for = "/admin/index.html"
-  [headers.values]
-    Cache-Control = "no-cache, no-store, must-revalidate"
-
-[[headers]]
-  for = "/quiz/index.html"
-  [headers.values]
-    Cache-Control = "no-cache, no-store, must-revalidate"
-
-# ── Security headers (applied to every response) ──────────────────────────
 [[headers]]
   for = "/*"
   [headers.values]
-    # Block clickjacking
     X-Frame-Options = "DENY"
-    # Block MIME-type sniffing
+    X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
-    # Force HTTPS for 1 year
-    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    # Restrict referrer info
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    # Permissions — deny camera/mic/geo by default
-    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-    # Content Security Policy
-    # IMPORTANT: tighten script-src further once you know all third-party origins
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:; frame-ancestors 'none';"

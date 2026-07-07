@@ -1,0 +1,683 @@
+diff --git a/.editorconfig b/.editorconfig
+new file mode 100644
+index 0000000..1014ba7
+--- /dev/null
++++ b/.editorconfig
+@@ -0,0 +1,12 @@
++root = true
++
++[*]
++charset = utf-8
++end_of_line = lf
++insert_final_newline = true
++indent_style = space
++indent_size = 2
++trim_trailing_whitespace = true
++
++[*.md]
++trim_trailing_whitespace = false
+diff --git a/.github/ISSUE_TEMPLATE/bug_report.md b/.github/ISSUE_TEMPLATE/bug_report.md
+new file mode 100644
+index 0000000..cccf801
+--- /dev/null
++++ b/.github/ISSUE_TEMPLATE/bug_report.md
+@@ -0,0 +1,36 @@
++---
++name: Bug Report
++about: Something is broken or behaving unexpectedly
++title: "fix: <short description>"
++labels: bug
++assignees: ""
++---
++
++## Describe the Bug
++
++<!-- A clear and concise description of what the bug is. -->
++
++## Steps to Reproduce
++
++1.
++2.
++3.
++
++## Expected Behavior
++
++<!-- What should happen? -->
++
++## Actual Behavior
++
++<!-- What actually happens? Include error messages, stack traces, or screenshots. -->
++
++## Environment
++
++- OS:
++- Browser (if frontend):
++- Node.js version (`node -v`):
++- pnpm version (`pnpm -v`):
++
++## Additional Context
++
++<!-- Anything else that might help: related issues, workarounds you tried, etc. -->
+diff --git a/.github/ISSUE_TEMPLATE/config.yml b/.github/ISSUE_TEMPLATE/config.yml
+new file mode 100644
+index 0000000..8187941
+--- /dev/null
++++ b/.github/ISSUE_TEMPLATE/config.yml
+@@ -0,0 +1,8 @@
++blank_issues_enabled: false
++contact_links:
++  - name: Security Vulnerability
++    url: https://github.com/CRAJKUMARSINGH/Indori-Wuolingo/blob/main/SECURITY.md
++    about: Do not open public issues for security vulnerabilities. Read SECURITY.md for responsible disclosure guidelines.
++  - name: Discussions
++    url: https://github.com/CRAJKUMARSINGH/Indori-Wuolingo/discussions
++    about: Questions, ideas, and community discussions belong here, not in issues.
+diff --git a/.github/ISSUE_TEMPLATE/content_request.md b/.github/ISSUE_TEMPLATE/content_request.md
+new file mode 100644
+index 0000000..bd08e4b
+--- /dev/null
++++ b/.github/ISSUE_TEMPLATE/content_request.md
+@@ -0,0 +1,40 @@
++---
++name: Content Request
++about: Request new lessons, exercises, or dialect content
++title: "content: <unit/topic name>"
++labels: content
++assignees: ""
++---
++
++## What Content Is Needed?
++
++<!-- Describe the lesson topic, vocabulary set, or dialect phrase category. -->
++
++## Target Unit
++
++<!-- Which unit does this belong to, or should it be a new unit? -->
++
++## Example Phrases or Vocabulary
++
++<!-- Provide examples of what the content should cover. Indori dialect accuracy is required. -->
++
++| Indori Phrase | Standard Hindi | English |
++|---|---|---|
++| | | |
++| | | |
++
++## Native Speaker Verified
++
++- [ ] Yes, this content has been verified by a native Indori speaker
++- [ ] No, I need a reviewer to verify
++
++## Exercise Types Suggested
++
++- [ ] Translation (Indori → English / English → Indori)
++- [ ] Multiple choice
++- [ ] Fill in the blank
++- [ ] Matching pairs
++
++## Additional Notes
++
++<!-- Cultural context, pronunciation tips, regional variations, etc. -->
+diff --git a/.github/ISSUE_TEMPLATE/feature_request.md b/.github/ISSUE_TEMPLATE/feature_request.md
+new file mode 100644
+index 0000000..02c912b
+--- /dev/null
++++ b/.github/ISSUE_TEMPLATE/feature_request.md
+@@ -0,0 +1,39 @@
++---
++name: Feature Request
++about: Suggest a new feature or enhancement
++title: "feat: <short description>"
++labels: enhancement
++assignees: ""
++---
++
++## Problem Statement
++
++<!-- What problem does this feature solve? Who experiences it and when? -->
++
++## Proposed Solution
++
++<!-- Describe the feature you'd like. Be as specific as you can. -->
++
++## Alternatives Considered
++
++<!-- Have you thought of other approaches? Why is your proposal better? -->
++
++## Scope
++
++- [ ] Frontend only
++- [ ] Backend / API only
++- [ ] Full-stack (both)
++- [ ] Content (new lessons / exercises)
++- [ ] Infrastructure / DevOps
++
++## Acceptance Criteria
++
++<!-- How will we know when this is done? List specific, testable conditions. -->
++
++- [ ]
++- [ ]
++- [ ]
++
++## Additional Context
++
++<!-- Mockups, external references, related issues, etc. -->
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000..b8b970d
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,46 @@
++## Summary
++
++<!-- Describe what this PR does in 2–3 sentences. What problem does it solve? -->
++
++## Type of Change
++
++- [ ] Bug fix (non-breaking)
++- [ ] New feature (non-breaking)
++- [ ] Breaking change (requires migration or consumer update)
++- [ ] Content addition (new lessons/exercises)
++- [ ] Documentation / chore
++
++## Related Issue
++
++Closes #
++
++## Changes Made
++
++<!-- List the key files changed and why. Bullet points are fine. -->
++
++-
++-
++-
++
++## Screenshots or Demo
++
++<!-- If this is a frontend change, attach a screenshot or screen recording. -->
++
++## OpenAPI / Codegen
++
++- [ ] I changed `lib/api-spec/openapi.yaml`
++- [ ] I ran `pnpm --filter @workspace/api-spec run codegen` and committed the generated files
++
++## Database
++
++- [ ] I changed `lib/db/src/schema/`
++- [ ] I ran `pnpm --filter @workspace/db run push` (dev only — do not run against prod)
++
++## Checklist
++
++- [ ] `pnpm run typecheck` passes with no errors
++- [ ] `pnpm --filter @workspace/api-server run build` succeeds
++- [ ] All edge cases (empty state, error state, loading state) are handled in the UI
++- [ ] Server route handlers use `req.log`, not `console.log`
++- [ ] No secrets or credentials committed
++- [ ] PR title follows Conventional Commits format (`feat(scope): ...`)
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 640fab6..4c9647f 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -7,26 +7,38 @@ on:
+     branches: [main]
+ 
+ jobs:
+-  build-and-test:
++  typecheck:
++    name: Typecheck (pnpm workspace)
+     runs-on: ubuntu-latest
+     steps:
+-      - name: Checkout code
++      - name: Checkout
+         uses: actions/checkout@v4
+ 
+-      - name: Set up Node.js
++      - name: Setup Node
+         uses: actions/setup-node@v4
+         with:
+           node-version: 20
+-          cache: npm
+ 
+-      - name: Install dependencies
+-        run: npm ci
++      - name: Setup pnpm
++        uses: pnpm/action-setup@v4
++        with:
++          version: 10
++          run_install: false
+ 
+-      - name: Run lint
+-        run: npm run lint --if-present
++      - name: Get pnpm store path
++        id: pnpm-cache
++        run: echo "store=$(pnpm store path)" >> $GITHUB_OUTPUT
+ 
+-      - name: Run tests
+-        run: npm test --if-present
++      - name: Cache pnpm store
++        uses: actions/cache@v4
++        with:
++          path: ${{ steps.pnpm-cache.outputs.store }}
++          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
++          restore-keys: |
++            ${{ runner.os }}-pnpm-
++
++      - name: Install dependencies
++        run: pnpm install --frozen-lockfile
+ 
+-      - name: Build project
+-        run: npm run build --if-present
++      - name: Typecheck
++        run: pnpm run typecheck
+diff --git a/CODE_OF_CONDUCT.md b/CODE_OF_CONDUCT.md
+new file mode 100644
+index 0000000..9fd7903
+--- /dev/null
++++ b/CODE_OF_CONDUCT.md
+@@ -0,0 +1,81 @@
++# Contributor Covenant Code of Conduct
++
++## Our Pledge
++
++We as members, contributors, and leaders pledge to make participation in Indori Wuolingo a harassment-free experience for everyone, regardless of age, body size, visible or invisible disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, caste, religion, or sexual identity and orientation.
++
++We pledge to act and interact in ways that contribute to an open, welcoming, diverse, inclusive, and healthy community.
++
++---
++
++## Our Standards
++
++**Examples of behavior that contributes to a positive environment:**
++
++- Demonstrating empathy and kindness toward other people
++- Being respectful of differing opinions, viewpoints, and experiences
++- Giving and gracefully accepting constructive feedback
++- Accepting responsibility and apologizing to those affected by our mistakes, and learning from the experience
++- Focusing on what is best not just for us as individuals, but for the overall community
++- Respecting the cultural authenticity of the Indori dialect — do not mock or trivialize regional languages
++
++**Examples of unacceptable behavior:**
++
++- The use of sexualized language or imagery, and sexual attention or advances of any kind
++- Trolling, insulting or derogatory comments, and personal or political attacks
++- Public or private harassment
++- Publishing others' private information, such as a physical or electronic address, without their explicit permission
++- Mocking or dismissing regional dialects, accents, or cultural practices
++- Other conduct which could reasonably be considered inappropriate in a professional setting
++
++---
++
++## Enforcement Responsibilities
++
++Project maintainers are responsible for clarifying and enforcing our standards of acceptable behavior and will take appropriate and fair corrective action in response to any behavior that they deem inappropriate, threatening, offensive, or harmful.
++
++Maintainers have the right and responsibility to remove, edit, or reject comments, commits, code, wiki edits, issues, and other contributions that are not aligned with this Code of Conduct, and will communicate reasons for moderation decisions when appropriate.
++
++---
++
++## Scope
++
++This Code of Conduct applies within all project spaces, and also applies when an individual is officially representing the project in public spaces. Examples of representing our project include using an official project email address, posting via an official social media account, or acting as an appointed representative at an online or offline event.
++
++---
++
++## Enforcement
++
++Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by opening a confidential issue or contacting the project maintainers directly. All complaints will be reviewed and investigated promptly and fairly.
++
++All maintainers are obligated to respect the privacy and security of the reporter of any incident.
++
++---
++
++## Enforcement Guidelines
++
++Maintainers will follow these Community Impact Guidelines in determining consequences for any action they deem in violation of this Code of Conduct:
++
++### 1. Correction
++**Community Impact:** Use of inappropriate language or other behavior deemed unprofessional or unwelcome.
++**Consequence:** A private, written warning, providing clarity around the nature of the violation and an explanation of why the behavior was inappropriate. A public apology may be requested.
++
++### 2. Warning
++**Community Impact:** A violation through a single incident or series of actions.
++**Consequence:** A warning with consequences for continued behavior. No interaction with the people involved, including unsolicited interaction with those enforcing the Code of Conduct, for a specified period of time.
++
++### 3. Temporary Ban
++**Community Impact:** A serious violation of community standards, including sustained inappropriate behavior.
++**Consequence:** A temporary ban from any sort of interaction or public communication with the community for a specified period of time.
++
++### 4. Permanent Ban
++**Community Impact:** Demonstrating a pattern of violation of community standards, including sustained inappropriate behavior, harassment, or aggression toward individuals.
++**Consequence:** A permanent ban from any sort of public interaction within the community.
++
++---
++
++## Attribution
++
++This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org), version 2.1, available at https://www.contributor-covenant.org/version/2/1/code_of_conduct.html.
++
++Community Impact Guidelines were inspired by [Mozilla's code of conduct enforcement ladder](https://github.com/mozilla/diversity).
+diff --git a/CONTRIBUTING.md b/CONTRIBUTING.md
+new file mode 100644
+index 0000000..0ec8a77
+--- /dev/null
++++ b/CONTRIBUTING.md
+@@ -0,0 +1,206 @@
++# Contributing to Indori Wuolingo
++
++Thank you for your interest in contributing. This guide covers the development workflow, code standards, and PR process.
++
++---
++
++## Table of Contents
++
++- [Code of Conduct](#code-of-conduct)
++- [How to Contribute](#how-to-contribute)
++- [Development Setup](#development-setup)
++- [Branch Conventions](#branch-conventions)
++- [Commit Message Format](#commit-message-format)
++- [Pull Request Process](#pull-request-process)
++- [Code Standards](#code-standards)
++- [Adding Lessons and Exercises](#adding-lessons-and-exercises)
++- [Testing](#testing)
++- [Review SLA](#review-sla)
++
++---
++
++## Code of Conduct
++
++All contributors must follow the [Code of Conduct](CODE_OF_CONDUCT.md). Violations will result in removal from the project.
++
++---
++
++## How to Contribute
++
++1. **Browse open issues** — look for `good first issue` or `help wanted` labels.
++2. **Comment on the issue** before starting work to avoid duplication.
++3. **Fork the repo**, create a feature branch, make your changes, and open a PR.
++4. **Never push directly to `main`** — all changes go through PRs.
++
++---
++
++## Development Setup
++
++### Requirements
++
++- Node.js 24+
++- pnpm 9+ (`npm install -g pnpm`)
++- PostgreSQL (local install or Replit's built-in database)
++
++### First-time setup
++
++```bash
++# Clone the repo
++git clone https://github.com/CRAJKUMARSINGH/Indori-Wuolingo.git
++cd Indori-Wuolingo
++
++# Install all workspace packages
++pnpm install
++
++# Set up environment
++cp .env.example .env
++# Edit .env with your DATABASE_URL and SESSION_SECRET
++
++# Push DB schema
++pnpm --filter @workspace/db run push
++
++# Start API server (port 5000)
++pnpm --filter @workspace/api-server run dev
++
++# Start frontend (separate terminal)
++pnpm --filter @workspace/indori-wuolingo run dev
++```
++
++### After changing the OpenAPI spec
++
++```bash
++pnpm --filter @workspace/api-spec run codegen
++```
++
++This regenerates `lib/api-client-react` and `lib/api-zod`. Always commit generated files alongside spec changes.
++
++---
++
++## Branch Conventions
++
++| Branch prefix | Purpose |
++|---|---|
++| `feat/` | New feature |
++| `fix/` | Bug fix |
++| `chore/` | Build scripts, CI, dependencies |
++| `docs/` | Documentation only |
++| `refactor/` | Code restructuring, no behavior change |
++| `test/` | Adding or fixing tests |
++| `content/` | Adding lessons, exercises, or dialect content |
++
++Examples:
++```
++feat/leaderboard-weekly-reset
++fix/xp-not-incrementing-on-correct-answer
++content/unit-3-indori-food-phrases
++```
++
++---
++
++## Commit Message Format
++
++Follow [Conventional Commits](https://www.conventionalcommits.org/):
++
++```
++<type>(<scope>): <short description>
++
++[optional body]
++
++[optional footer]
++```
++
++Types: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `content`
++
++Scope is optional but encouraged: `api`, `frontend`, `db`, `spec`, `lessons`.
++
++Examples:
++```
++feat(api): add streak auto-increment on daily login
++fix(frontend): lesson screen crashes on empty exercise list
++content(lessons): add unit 4 — Indori marketplace vocabulary
++```
++
++---
++
++## Pull Request Process
++
++1. **Open a draft PR early** if you want early feedback.
++2. Fill in the [PR template](.github/pull_request_template.md) completely.
++3. Keep PRs focused — one logical change per PR.
++4. **Required before merging:**
++   - All CI checks pass
++   - At least one approving review from a maintainer
++   - No unresolved comments
++   - `pnpm run typecheck` passes locally
++5. **Squash-merge** is preferred for feature branches to keep main history clean.
++6. Delete your branch after merge.
++
++---
++
++## Code Standards
++
++### TypeScript
++
++- Strict mode is enabled — no `any`, no type suppression without a comment explaining why.
++- Use `zod/v4` for runtime validation.
++- Import generated hooks from `@workspace/api-client-react`, never from relative paths.
++- Server route handlers must use `req.log` (Pino) — never `console.log`.
++
++### API Contract
++
++- All API changes start in `lib/api-spec/openapi.yaml`.
++- Every endpoint needs an `operationId`.
++- Request bodies must be `$ref`'d components, never inlined.
++- Component names must be entity-shaped (`LessonInput`, `UserUpdate`), never operation-shaped (`CreateLessonBody`).
++- Run codegen after every spec change and commit generated files.
++
++### Database
++
++- All schema changes go in `lib/db/src/schema/`.
++- One table per file.
++- Each file exports: the table, the insert schema (drizzle-zod), and the inferred types.
++- Do not write raw SQL migrations — use `drizzle-kit push` in development.
++
++### Frontend
++
++- No emojis in the UI — use `lucide-react` icons.
++- Only import hooks you actually use (unused imports break TypeScript builds).
++- Use `framer-motion` for meaningful animations; avoid decorative-only motion.
++- Every page needs a loading state and an empty state.
++
++---
++
++## Adding Lessons and Exercises
++
++Dialect content is the heart of this project. To add lessons:
++
++1. Insert lesson rows into the `lessons` table using the admin API (`POST /api/lessons`).
++2. Insert exercise rows into the `exercises` table (`POST /api/exercises`).
++3. Exercise types: `translate`, `multiple_choice`, `fill_blank`, `match`.
++4. Always include a clear `explanation` — this is the learning moment.
++5. If you're adding a new unit, increment `unit_number` from the last existing unit.
++
++For large content additions, open a `content/` branch and attach a CSV or JSON of the lesson data in your PR so reviewers can verify dialect accuracy.
++
++**Dialect accuracy is non-negotiable.** If you are not a native Indori speaker, get a review from someone who is before merging content.
++
++---
++
++## Testing
++
++```bash
++# Typecheck all packages
++pnpm run typecheck
++
++# Test the API manually
++curl http://localhost:80/api/healthz
++curl http://localhost:80/api/lessons
++```
++
++Automated tests are planned. If you're adding a critical path feature, consider adding a test alongside it.
++
++---
++
++## Review SLA
++
++Maintainers aim to review PRs within **3 business days**. If your PR sits for longer, ping the maintainer on the issue thread — not in DMs.
+diff --git a/LICENSE b/LICENSE
+new file mode 100644
+index 0000000..40cfc3c
+--- /dev/null
++++ b/LICENSE
+@@ -0,0 +1,21 @@
++MIT License
++
++Copyright (c) 2026 CRAJKUMARSINGH
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in all
++copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++SOFTWARE.
+diff --git a/README.md b/README.md
+index 8b13789..6d46137 100644
+--- a/README.md
++++ b/README.md
+@@ -1 +1,7 @@
+ 
++
++## Indore Series
++
++This repo is part of the `Indore01` → `Indore12` public build series. For the most complete “candidate view” also see:
++
++- Final IndiLingo: https://github.com/CRAJKUMARSINGH/Indore12
+diff --git a/SECURITY.md b/SECURITY.md
+new file mode 100644
+index 0000000..831f02a
+--- /dev/null
++++ b/SECURITY.md
+@@ -0,0 +1,67 @@
++# Security Policy
++
++## Supported Versions
++
++| Version | Supported |
++|---|---|
++| main branch | Yes |
++| Tagged releases | Yes (latest two) |
++| Older releases | No |
++
++---
++
++## Reporting a Vulnerability
++
++**Do not open a public GitHub issue for security vulnerabilities.**
++
++To report a vulnerability, please follow these steps:
++
++1. **Email the maintainer** at the address listed on the GitHub profile, with the subject line: `[SECURITY] Indori Wuolingo — <brief description>`.
++2. Include the following in your report:
++   - Description of the vulnerability
++   - Steps to reproduce
++   - Potential impact (data exposure, privilege escalation, etc.)
++   - Any suggested mitigations
++3. You will receive an acknowledgment within **48 hours**.
++4. We aim to release a patch within **7 days** for critical vulnerabilities and **30 days** for lower-severity issues.
++5. We will credit you in the release notes unless you prefer to remain anonymous.
++
++---
++
++## Scope
++
++In scope for vulnerability reports:
++- API authentication and authorization flaws
++- SQL injection or database-level vulnerabilities
++- XSS, CSRF, or injection vulnerabilities in the frontend
++- Information disclosure (private user data, credentials)
++- Dependency vulnerabilities with a known exploit
++
++Out of scope:
++- Rate limiting issues without a demonstrated impact
++- Theoretical vulnerabilities without proof of concept
++- Issues in development-only tooling (`devDependencies`)
++- Self-XSS requiring the attacker to target themselves
++
++---
++
++## Disclosure Policy
++
++We follow responsible disclosure. We ask that you:
++- Give us reasonable time to patch before public disclosure
++- Not exploit the vulnerability beyond what is necessary to confirm it
++- Not access or modify other users' data
++
++We commit to:
++- Responding promptly
++- Not pursuing legal action against good-faith reporters
++- Publicly acknowledging valid reports (with your permission)
++
++---
++
++## Known Security Mitigations
++
++- All user inputs validated with Zod schemas on the server
++- Parameterized SQL queries via Drizzle ORM (no raw string interpolation)
++- CORS restricted to known origins in production
++- Session secrets rotated via environment variables, never hardcoded

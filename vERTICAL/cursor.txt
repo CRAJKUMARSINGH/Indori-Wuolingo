@@ -1,0 +1,208 @@
+You are a world-class full-stack architect, React Native/Expo + Vite expert, product strategist, and QA automation engineer specializing in gamified language learning apps.
+Mission: Brilliantly merge all 13 public repositories into one unified, enterprise-grade, production-ready application called Indori-Wuolingo (or a stronger final name you propose). These repos contain drafts, experiments, and versions of Indian regional language learning software targeted at Hindi/English-knowing students across Beginner, Intermediate, and Expert levels.
+Repositories:
+
+https://github.com/CRAJKUMARSINGH/Indori-Wuolingo (primary)
+https://github.com/CRAJKUMARSINGH/Indore01 through Indore12
+
+Critical Context & Requirements:
+
+Handle LFS folders (artifacts/, attached_assets/, large ZIPs, images, plans) properly.
+Integrated development optimized for Replit (respect .replit, replit.md, etc.).
+Synthesize the best code, UI patterns, content schemas, and features from every repo. No one has merged them brilliantly yet — you will.
+Explicitly incorporate lessons from prior implementation work:
+Fix match_pairs seed/player alignment and implement polished two-column “Match it” UI (from Indore09/10 specs).
+Add vite-plugin-pwa for PWA support (offline shell, asset caching).
+Verify and document soft hearts behavior in ExercisePlayer (infinite retries for MVP, with clear path to strict mode later).
+Build and run a full robotic test suite: 21 users × 15 languages × all lessons. Support offline mode (seed data validation) and optional real API mode.
+Ensure ExercisePlayer unification, Framer Motion transitions, Lesson/Review refactoring, curriculum extraction into shared module, and hearts/XP/stars logic consistency.
+
+
+Deliverables:
+
+Unified Production Skeleton
+Clean pnpm workspace / TypeScript / Expo (mobile) + Vite (web/admin) structure.
+Merged ExercisePlayer with all exercise types (including fixed match_pairs).
+Adaptive paths for 3 user levels (Beginner / Intermediate / Expert).
+Scalable curriculum/content system for Hindi-first + other Indian languages.
+
+Brilliant Marketing README.md
+Highly engaging, investor/contributor-friendly README with hero section, features by user level, tech highlights, quick-start (Replit + local), and strong CTAs.
+
+Beautiful Landing Page
+Generate a stunning, responsive, culturally relevant landing page (HTML/Tailwind or React) ready for Vercel/Netlify. Include sections for vision, three user levels, features, PWA benefits, and download/waitlist CTAs.
+
+52-Week Action Plan
+Detailed Markdown roadmap covering development, content (all 3 levels + 15+ languages), testing (including robotic suite), marketing, monetization, and scaling.
+
+Documentation & Polish
+Updated docs/contributing/, CONTRIBUTING.md, PR templates, replit.md, etc.
+Soft hearts documentation + future strict mode path.
+Robotic test implementation and sample results.
+
+
+Process:
+
+Thoroughly analyze all 13 repos + prior task logs (match_pairs, PWA, hearts, robotic tests, ExercisePlayer, etc.).
+Resolve conflicts and produce the best unified version.
+Prioritize mobile-first UX, cultural relevance, performance, accessibility, and enterprise readiness (auth, DB seeding, API integration, admin hooks).
+
+Output Structure:
+
+Executive Summary & merging decisions.
+Key code changes/skeleton (with focus on match_pairs fix, ExercisePlayer, PWA, robotic test).
+Full README.md.
+Full landing page code.
+52-Week Action Plan.
+Next steps for Replit and deployment.
+
+Think step-by-step. Be ambitious, detail-oriented, and user-focused. Deliver a polished foundation that feels complete and exciting.
+
+
+
+Read `cursor.txt`, cloned all 13 repos, inspected the key Indore/Indori sources, and continued the merge work into a clean deliverable bundle.
+
+Created:
+
+- [Merge summary](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified/MERGE_SUMMARY.md)
+- [Production skeleton](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified/PRODUCTION_SKELETON.md)
+- [Full README](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified/README.md)
+- [Landing page HTML](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified/landing-page.html)
+- [52-week action plan](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified/ACTION_PLAN_52_WEEKS.md)
+- [Soft hearts docs](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified/docs/SOFT_HEARTS.md)
+- [Robotic test suite docs](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified/docs/ROBOTIC_TEST_SUITE.md)
+- [Zip bundle](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified.zip)
+
+Key decision: `Indore10` is the strongest runnable/product donor, `Indori-Wuolingo` remains the umbrella repo/brand, and the bundle explicitly fixes the `match_pairs` seed/player alignment with a stable two-column “Match it” contract. I verified the files exist and checked the required keywords/content paths. I did not run a full app build because this turn produced the merge blueprint/artifact bundle rather than installing and compiling a new unified monorepo.
+Use the output bundle as a **handoff kit**, not as a finished repo by itself.
+
+Your files are here:
+
+[Output folder](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified)  
+[Zip bundle](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified.zip)
+
+Recommended use in your local `Indori-Wuolingo` repo:
+
+1. Copy docs into the repo root:
+
+```powershell
+Copy-Item "C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\outputs\indori-wuolingo-unified\README.md" "C:\path\to\Indori-Wuolingo\README.md" -Force
+
+Copy-Item "C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\outputs\indori-wuolingo-unified\MERGE_SUMMARY.md" "C:\path\to\Indori-Wuolingo\MERGE_SUMMARY.md" -Force
+
+Copy-Item "C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\outputs\indori-wuolingo-unified\PRODUCTION_SKELETON.md" "C:\path\to\Indori-Wuolingo\PRODUCTION_SKELETON.md" -Force
+
+Copy-Item "C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\outputs\indori-wuolingo-unified\ACTION_PLAN_52_WEEKS.md" "C:\path\to\Indori-Wuolingo\ACTION_PLAN_52_WEEKS.md" -Force
+```
+
+2. Copy the docs folder:
+
+```powershell
+Copy-Item "C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\outputs\indori-wuolingo-unified\docs\*" "C:\path\to\Indori-Wuolingo\docs\" -Recurse -Force
+```
+
+3. Put the landing page somewhere deployable:
+
+```powershell
+Copy-Item "C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\outputs\indori-wuolingo-unified\landing-page.html" "C:\path\to\Indori-Wuolingo\landing-page.html" -Force
+```
+
+Or, if your repo has a Vite app, place it as:
+
+```text
+apps/web/public/landing-page.html
+```
+
+4. Use `PRODUCTION_SKELETON.md` as the implementation guide.
+
+The most important code work to do next is:
+
+- move the strongest `Indore10/artifacts/indilingo` web app into `apps/web`
+- extract `Indore10/scripts/src/seed-indilingo.ts` into `packages/curriculum`
+- move Drizzle schema into `packages/db`
+- replace the current `match_pairs` logic with the stable two-column version from `PRODUCTION_SKELETON.md`
+- add `vite-plugin-pwa`
+- add robotic tests from `docs/ROBOTIC_TEST_SUITE.md`
+
+In short: copy the Markdown files directly, use the landing page as a deployable marketing page, and use the skeleton as the blueprint for the actual code merge.
+Use **Indore10 as the main code donor**, not as the final repo name.
+
+Best role for `Indore10`:
+
+1. **Copy its runnable web app**
+   Source:
+   `work/repos/Indore10/artifacts/indilingo`
+
+   Put into final repo as:
+   `apps/web`
+
+2. **Copy its API server**
+   Source:
+   `work/repos/Indore10/artifacts/api-server`
+
+   Put into:
+   `packages/api` or `apps/api`
+
+3. **Use its DB schema**
+   Source:
+   `work/repos/Indore10/lib/db/src/schema`
+
+   Put into:
+   `packages/db/src/schema`
+
+4. **Use its curriculum seed**
+   Source:
+   `work/repos/Indore10/scripts/src/seed-indilingo.ts`
+
+   Put into:
+   `packages/curriculum/src/seed-indilingo.ts`
+
+5. **Fix its `ExercisePlayer` before trusting it**
+   Source:
+   `work/repos/Indore10/artifacts/indilingo/src/components/exercise-player.tsx`
+
+   Keep most of it, but replace the `match_pairs` logic. Current Indore10 matching uses a loose options bag; your final app should use the stable two-column `"Match it"` version from:
+
+   [PRODUCTION_SKELETON.md](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified/PRODUCTION_SKELETON.md)
+
+6. **Do not make Indore10 the public brand**
+   Public brand/repo should remain:
+
+   `Indori-Wuolingo`
+
+   Product/UI name can be:
+
+   `IndiLingo`
+
+So, practically:
+
+```text
+Indori-Wuolingo = final home / brand / repo
+Indore10 = strongest implementation donor
+Indore09 = mobile + earlier exercise donor
+Indore03/04/08 = docs, gamification, offline concepts
+Indore12 = merger blueprint/reference
+```
+
+Short answer: **move the best parts of Indore10 into Indori-Wuolingo, then retire Indore10 as a source/reference branch.**
+
+Done. I modified the output bundle for the **Indore10 task** specifically.
+
+New files added:
+
+- [INDORE10_MIGRATION_GUIDE.md](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified/INDORE10_MIGRATION_GUIDE.md)
+- [INDORE10_COPY_PLAN.ps1](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified/INDORE10_COPY_PLAN.ps1)
+
+Also updated:
+
+- [README.md](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified/README.md)
+- [MERGE_SUMMARY.md](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified/MERGE_SUMMARY.md)
+- Refreshed zip: [indori-wuolingo-unified.zip](C:/Users/Rajkumar/Documents/Codex/2026-07-07/r/outputs/indori-wuolingo-unified.zip)
+
+Use the migration guide first. The `.ps1` file is a copy-plan script: edit this line before running it:
+
+```powershell
+$FinalRepo = "C:\path\to\Indori-Wuolingo"
+```
+
+Then it will stage Indore10’s web app, API, DB, OpenAPI packages, generated clients, and seed file into the final repo layout. The guide tells you what to patch immediately after: `match_pairs`, soft hearts, PWA, and curriculum extraction.

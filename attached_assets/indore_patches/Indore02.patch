@@ -1,0 +1,247 @@
+diff --git a/.editorconfig b/.editorconfig
+new file mode 100644
+index 0000000..1014ba7
+--- /dev/null
++++ b/.editorconfig
+@@ -0,0 +1,12 @@
++root = true
++
++[*]
++charset = utf-8
++end_of_line = lf
++insert_final_newline = true
++indent_style = space
++indent_size = 2
++trim_trailing_whitespace = true
++
++[*.md]
++trim_trailing_whitespace = false
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+new file mode 100644
+index 0000000..4c9647f
+--- /dev/null
++++ b/.github/workflows/ci.yml
+@@ -0,0 +1,44 @@
++name: CI
++
++on:
++  pull_request:
++    branches: [main]
++  push:
++    branches: [main]
++
++jobs:
++  typecheck:
++    name: Typecheck (pnpm workspace)
++    runs-on: ubuntu-latest
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v4
++
++      - name: Setup Node
++        uses: actions/setup-node@v4
++        with:
++          node-version: 20
++
++      - name: Setup pnpm
++        uses: pnpm/action-setup@v4
++        with:
++          version: 10
++          run_install: false
++
++      - name: Get pnpm store path
++        id: pnpm-cache
++        run: echo "store=$(pnpm store path)" >> $GITHUB_OUTPUT
++
++      - name: Cache pnpm store
++        uses: actions/cache@v4
++        with:
++          path: ${{ steps.pnpm-cache.outputs.store }}
++          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
++          restore-keys: |
++            ${{ runner.os }}-pnpm-
++
++      - name: Install dependencies
++        run: pnpm install --frozen-lockfile
++
++      - name: Typecheck
++        run: pnpm run typecheck
+diff --git a/README.md b/README.md
+index be70f74..ffa3f77 100644
+--- a/README.md
++++ b/README.md
+@@ -1,159 +1,30 @@
+-# Indori Wuolingo
++# Indore02 (Iteration)
+ 
+-> A gamified, enterprise-grade language learning platform for the Indori dialect — the vibrant, chaotic street Hindi of Indore, Madhya Pradesh.
++Milestone repo in the Indori-Wuolingo → IndiLingo series.
+ 
+----
++This repository is a **milestone snapshot** in the public `Indore01` → `Indore12` build series.
+ 
+-## What Is This?
++## Where to start (best candidate view)
+ 
+-Indori Wuolingo brings the addictive lesson-streak mechanics of modern language apps to a deeply regional language experience. Users learn Indori slang, phrases, and culture through bite-sized exercises, earn XP, maintain streaks, and compete on global leaderboards.
++- **Final**: https://github.com/CRAJKUMARSINGH/Indore12
++- **Flagship dialect product**: https://github.com/CRAJKUMARSINGH/Indori-Wuolingo
+ 
+-**Built for:** Language enthusiasts, cultural preservationists, Indore locals abroad, and anyone who wants to learn to say "Mhara Indore!" correctly.
++## What's inside
+ 
+----
++- Monorepo (pnpm workspace)
++- `artifacts/api-server`: Express API server
++- `artifacts/indori-wuolingo`: Web app (React + Vite)
++- `lib/*`: OpenAPI spec + generated clients + DB schema
+ 
+-## Features
+-
+-- Structured lesson tree with unlockable units
+-- Multiple exercise types: translation, multiple choice, fill-in-the-blank, matching
+-- XP and streak system
+-- Global leaderboard
+-- Per-user progress tracking
+-- Platform stats dashboard
+-- REST API with OpenAPI contract-first spec
+-
+----
+-
+-## Stack
+-
+-| Layer | Technology |
+-|---|---|
+-| Frontend | React 18, Vite, Tailwind CSS, TanStack Query |
+-| Backend | Express 5, Node.js 24 |
+-| Database | PostgreSQL + Drizzle ORM |
+-| Validation | Zod v4, drizzle-zod |
+-| API Contract | OpenAPI 3.1 → Orval codegen |
+-| Build | esbuild (CJS bundle) |
+-| Monorepo | pnpm workspaces |
+-
+----
+-
+-## Project Structure
+-
+-```
+-indori-wuolingo/
+-├── artifacts/
+-│   ├── api-server/          # Express REST API
+-│   └── indori-wuolingo/     # React + Vite frontend
+-├── lib/
+-│   ├── api-spec/            # OpenAPI spec (source of truth)
+-│   ├── api-client-react/    # Generated React Query hooks
+-│   ├── api-zod/             # Generated Zod validation schemas
+-│   └── db/                  # Drizzle ORM schema + migrations
+-└── scripts/                 # Utility scripts
+-```
+-
+----
+-
+-## Getting Started
+-
+-### Prerequisites
+-
+-- Node.js 24+
+-- pnpm 9+
+-- PostgreSQL (or use Replit's built-in DB)
+-
+-### 1. Install Dependencies
++## Run locally
+ 
+ ```bash
+ pnpm install
+-```
+-
+-### 2. Set Environment Variables
+-
+-```env
+-DATABASE_URL=postgresql://user:password@host:5432/dbname
+-SESSION_SECRET=your-secret-here
+-```
+-
+-### 3. Push the Database Schema
+-
+-```bash
+-pnpm --filter @workspace/db run push
+-```
+-
+-### 4. Run the API Server
+-
+-```bash
++pnpm run typecheck
+ pnpm --filter @workspace/api-server run dev
+-```
+-
+-### 5. Run the Frontend
+-
+-```bash
+ pnpm --filter @workspace/indori-wuolingo run dev
+ ```
+ 
+----
+-
+-## API Reference
+-
+-The OpenAPI spec lives at `lib/api-spec/openapi.yaml`. After editing it, regenerate clients:
+-
+-```bash
+-pnpm --filter @workspace/api-spec run codegen
+-```
+-
+-### Key Endpoints
+-
+-| Method | Path | Description |
+-|---|---|---|
+-| GET | /api/lessons | List all lessons |
+-| GET | /api/lessons/:id | Lesson detail with exercises |
+-| POST | /api/exercises/:id/submit | Submit an exercise answer |
+-| GET | /api/leaderboard | Top users ranked by XP |
+-| POST | /api/progress | Mark a lesson as complete |
+-| GET | /api/stats/overview | Platform-wide stats |
+-| GET | /api/stats/unit-progress | Per-unit completion |
+-
+----
+-
+-## Development Commands
+-
+-```bash
+-# Full typecheck
+-pnpm run typecheck
+-
+-# Build all packages
+-pnpm run build
+-
+-# Regenerate API client from spec
+-pnpm --filter @workspace/api-spec run codegen
+-
+-# Push DB schema changes (dev only)
+-pnpm --filter @workspace/db run push
+-```
+-
+----
+-
+-## Contributing
+-
+-See [CONTRIBUTING.md](CONTRIBUTING.md) for development workflow, branch conventions, and the PR process.
+-
+----
+-
+-## Code of Conduct
+-
+-This project follows the [Contributor Covenant](CODE_OF_CONDUCT.md). Be respectful.
+-
+----
+-
+-## Security
+-
+-Found a vulnerability? See [SECURITY.md](SECURITY.md) for responsible disclosure guidelines.
+-
+----
+-
+-## License
++## Notes
+ 
+-MIT — see [LICENSE](LICENSE).
++This repo is preserved as a milestone snapshot; see the series guide for how it fits.

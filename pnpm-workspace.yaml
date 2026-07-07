@@ -35,11 +35,14 @@ minimumReleaseAgeExclude:
   - stripe-replit-sync
 
 packages:
+  - apps/*
   - artifacts/*
   - artifacts/indori-wuolingo-web
   - lib/*
   - lib/integrations/*
+  - packages/*
   - scripts
+  - tests/*
 
 catalog:
   '@replit/vite-plugin-cartographer': ^0.5.21

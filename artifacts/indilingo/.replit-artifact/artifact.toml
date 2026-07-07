@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "IndiLingo"
+version = "1.0.0"
+id = "artifacts/indilingo"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23147
+
+[services.development]
+run = "pnpm --filter @workspace/indilingo run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/indilingo", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/indilingo/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23147"
+BASE_PATH = "/"

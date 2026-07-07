@@ -1,144 +1,239 @@
-import { Router } from "express";
+import { Router, type IRouter } from "express";
+import { eq, count } from "drizzle-orm";
 import { db } from "@workspace/db";
-import { usersTable } from "@workspace/db";
-import { eq, desc } from "drizzle-orm";
-import { CreateUserBody, UpdateUserBody } from "@workspace/api-zod";
+import {
+  usersTable,
+  lessonProgressTable,
+  lessonsTable,
+  unitsTable,
+  languagesTable,
+  exerciseMistakesTable,
+  exercisesTable,
+} from "@workspace/db";
+import {
+  CreateUserBody,
+  GetUserParams,
+  GetUserStatsParams,
+  GetReviewQueueParams,
+  CreateUserResponse,
+  GetUserResponse,
+  GetUserStatsResponse,
+  GetReviewQueueResponse,
+} from "@workspace/api-zod";
+import { sql } from "drizzle-orm";
 
-const router = Router();
+const router: IRouter = Router();
 
-const MILESTONE_BONUSES: Record<number, number> = { 7: 25, 30: 100 };
-
-function toDateString(d: Date): string {
-  return d.toISOString().split("T")[0];
-}
-
-function daysBetween(a: string, b: string): number {
-  return Math.round((new Date(b).getTime() - new Date(a).getTime()) / 86_400_000);
-}
-
-function serializeUser(u: typeof usersTable.$inferSelect) {
-  return { ...u, createdAt: u.createdAt.toISOString() };
-}
-
-router.get("/", async (req, res) => {
-  try {
-    const users = await db.select().from(usersTable).orderBy(desc(usersTable.xp));
-    res.json(users.map(serializeUser));
-  } catch (err) {
-    req.log.error({ err }, "Failed to list users");
-    res.status(500).json({ error: "Internal server error" });
+router.post("/users", async (req, res): Promise<void> => {
+  const body = CreateUserBody.safeParse(req.body);
+  if (!body.success) {
+    res.status(400).json({ error: body.error.message });
+    return;
   }
+
+  const [user] = await db
+    .insert(usersTable)
+    .values({ name: body.data.name })
+    .returning();
+
+  res.status(201).json(
+    CreateUserResponse.parse({
+      ...user,
+      lastActiveDate: user.lastActiveDate ?? null,
+      createdAt: user.createdAt.toISOString(),
+    })
+  );
 });
 
-router.post("/:id/checkin", async (req, res) => {
-  try {
-    const id = parseInt(req.params.id, 10);
-    if (isNaN(id)) return res.status(400).json({ error: "Invalid id" });
+router.get("/users/:userId", async (req, res): Promise<void> => {
+  const params = GetUserParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
 
-    const [user] = await db.select().from(usersTable).where(eq(usersTable.id, id));
-    if (!user) return res.status(404).json({ error: "User not found" });
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, params.data.userId));
 
-    const today = toDateString(new Date());
+  if (!user) {
+    res.status(404).json({ error: "User not found" });
+    return;
+  }
 
-    if (user.lastActiveDate === today) {
-      return res.json({
-        user: serializeUser(user),
-        streakAction: "already_checked_in",
-        bonusXp: 0,
-        milestoneReached: null,
+  res.json(
+    GetUserResponse.parse({
+      ...user,
+      lastActiveDate: user.lastActiveDate ?? null,
+      createdAt: user.createdAt.toISOString(),
+    })
+  );
+});
+
+router.get("/users/:userId/stats", async (req, res): Promise<void> => {
+  const params = GetUserStatsParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+
+  const { userId } = params.data;
+
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
+  if (!user) {
+    res.status(404).json({ error: "User not found" });
+    return;
+  }
+
+  // Per-language progress
+  const langs = await db.select().from(languagesTable);
+
+  const languageProgress = await Promise.all(
+    langs.map(async (lang) => {
+      const units = await db
+        .select({ id: unitsTable.id })
+        .from(unitsTable)
+        .where(eq(unitsTable.languageId, lang.id));
+      const unitIds = units.map((u) => u.id);
+
+      if (!unitIds.length) {
+        return {
+          languageId: lang.id,
+          languageName: lang.name,
+          nativeName: lang.nativeName,
+          flagEmoji: lang.flagEmoji,
+          completedLessons: 0,
+          totalLessons: 0,
+        };
+      }
+
+      const allLessons = await db
+        .select({ id: lessonsTable.id })
+        .from(lessonsTable);
+      const langLessons = allLessons.filter((l) => {
+        // We need to check if lesson belongs to one of these units
+        return true; // will filter via subquery below
       });
-    }
 
-    let newStreak: number;
-    let streakAction: string;
+      const [totalRow] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(lessonsTable)
+        .where(sql`${lessonsTable.unitId} = ANY(${unitIds}::int[])`);
 
-    if (!user.lastActiveDate) {
-      newStreak = 1;
-      streakAction = "continued";
-    } else {
-      const gap = daysBetween(user.lastActiveDate, today);
-      if (gap === 1) {
-        newStreak = user.streak + 1;
-        streakAction = "continued";
-      } else {
-        newStreak = 1;
-        streakAction = "reset";
-      }
-    }
+      const [completedRow] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(lessonProgressTable)
+        .where(
+          sql`${lessonProgressTable.userId} = ${userId} AND ${lessonProgressTable.lessonId} IN (
+            SELECT id FROM lessons WHERE unit_id = ANY(${unitIds}::int[])
+          )`
+        );
 
-    let bonusXp = 0;
-    let milestoneReached: number | null = null;
-    for (const milestone of [30, 7]) {
-      if (newStreak === milestone) {
-        bonusXp = MILESTONE_BONUSES[milestone];
-        milestoneReached = milestone;
-        break;
-      }
-    }
+      return {
+        languageId: lang.id,
+        languageName: lang.name,
+        nativeName: lang.nativeName,
+        flagEmoji: lang.flagEmoji,
+        completedLessons: Number(completedRow?.count ?? 0),
+        totalLessons: Number(totalRow?.count ?? 0),
+      };
+    })
+  );
 
-    const [updated] = await db
-      .update(usersTable)
-      .set({ streak: newStreak, lastActiveDate: today, xp: user.xp + bonusXp })
-      .where(eq(usersTable.id, id))
-      .returning();
+  // Filter languages that have lessons
+  const activeProgress = languageProgress.filter((lp) => lp.totalLessons > 0);
 
-    req.log.info({ userId: id, streakAction, newStreak, bonusXp, milestoneReached }, "User checked in");
+  // Badges derived from user data
+  const badges = [
+    {
+      id: "first_steps",
+      name: "First Steps",
+      description: "Complete your first lesson",
+      unlocked: user.xp > 0,
+    },
+    {
+      id: "century_club",
+      name: "Century Club",
+      description: "Earn 100 XP",
+      unlocked: user.xp >= 100,
+    },
+    {
+      id: "on_fire",
+      name: "On Fire",
+      description: "Reach a 7-day streak",
+      unlocked: user.streak >= 7,
+    },
+    {
+      id: "rocket_learner",
+      name: "Rocket Learner",
+      description: "Earn 500 XP",
+      unlocked: user.xp >= 500,
+    },
+    {
+      id: "champion",
+      name: "Champion",
+      description: "Earn 1000 XP",
+      unlocked: user.xp >= 1000,
+    },
+  ];
 
-    res.json({
-      user: serializeUser(updated),
-      streakAction,
-      bonusXp,
-      milestoneReached,
+  res.json(
+    GetUserStatsResponse.parse({
+      userId,
+      languageProgress: activeProgress,
+      badges,
+    })
+  );
+});
+
+router.get("/users/:userId/review", async (req, res): Promise<void> => {
+  const params = GetReviewQueueParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+
+  const { userId } = params.data;
+
+  const mistakes = await db
+    .select()
+    .from(exerciseMistakesTable)
+    .where(eq(exerciseMistakesTable.userId, userId))
+    .orderBy(
+      sql`${exerciseMistakesTable.missedCount} DESC, ${exerciseMistakesTable.lastMissedAt} ASC`
+    )
+    .limit(10);
+
+  if (!mistakes.length) {
+    res.json(GetReviewQueueResponse.parse([]));
+    return;
+  }
+
+  const exerciseIds = mistakes.map((m) => m.exerciseId);
+  const exercises = await db
+    .select()
+    .from(exercisesTable)
+    .where(sql`${exercisesTable.id} = ANY(${exerciseIds}::int[])`);
+
+  // Preserve spaced-repetition priority order from mistakes (missedCount DESC, lastMissedAt ASC)
+  const exerciseById: Record<number, (typeof exercises)[0]> = {};
+  for (const e of exercises) exerciseById[e.id] = e;
+
+  const result = mistakes
+    .filter((m) => exerciseById[m.exerciseId])
+    .map((m) => {
+      const e = exerciseById[m.exerciseId];
+      return {
+        ...e,
+        options: e.options ?? [],
+        nativeScript: e.nativeScript ?? null,
+        romanization: e.romanization ?? null,
+        missedCount: m.missedCount,
+      };
     });
-  } catch (err) {
-    req.log.error({ err }, "Failed to check in user");
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
 
-router.get("/:id", async (req, res) => {
-  try {
-    const id = parseInt(req.params.id, 10);
-    if (isNaN(id)) return res.status(400).json({ error: "Invalid id" });
-
-    const [user] = await db.select().from(usersTable).where(eq(usersTable.id, id));
-    if (!user) return res.status(404).json({ error: "User not found" });
-
-    res.json(serializeUser(user));
-  } catch (err) {
-    req.log.error({ err }, "Failed to get user");
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-router.post("/", async (req, res) => {
-  try {
-    const parsed = CreateUserBody.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.message });
-
-    const [user] = await db.insert(usersTable).values(parsed.data).returning();
-    res.status(201).json(serializeUser(user));
-  } catch (err) {
-    req.log.error({ err }, "Failed to create user");
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-router.patch("/:id", async (req, res) => {
-  try {
-    const id = parseInt(req.params.id, 10);
-    if (isNaN(id)) return res.status(400).json({ error: "Invalid id" });
-
-    const parsed = UpdateUserBody.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.message });
-
-    const [user] = await db.update(usersTable).set(parsed.data).where(eq(usersTable.id, id)).returning();
-    if (!user) return res.status(404).json({ error: "User not found" });
-    res.json(serializeUser(user));
-  } catch (err) {
-    req.log.error({ err }, "Failed to update user");
-    res.status(500).json({ error: "Internal server error" });
-  }
+  res.json(GetReviewQueueResponse.parse(result));
 });
 
 export default router;

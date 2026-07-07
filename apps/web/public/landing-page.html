@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Indori-Wuolingo - Learn Indian Languages</title>
+  <meta name="description" content="A gamified, mobile-first Indian language learning platform for Hindi and English knowing learners." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .hero {
+      background-image:
+        linear-gradient(90deg, rgba(12, 36, 31, .88), rgba(12, 36, 31, .52), rgba(12, 36, 31, .2)),
+        url("https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1800&q=80");
+      background-size: cover;
+      background-position: center;
+    }
+  </style>
+</head>
+<body class="bg-[#fffaf0] text-slate-950">
+  <main>
+    <section class="hero min-h-[88vh] px-5 py-6 text-white sm:px-8 lg:px-12">
+      <nav class="mx-auto flex max-w-7xl items-center justify-between">
+        <a class="text-xl font-black tracking-tight" href="#">Indori-Wuolingo</a>
+        <div class="hidden items-center gap-6 text-sm font-semibold md:flex">
+          <a href="#levels">Levels</a>
+          <a href="#features">Features</a>
+          <a href="#pwa">PWA</a>
+          <a href="#waitlist" class="rounded-full bg-white px-4 py-2 text-teal-900">Join waitlist</a>
+        </div>
+      </nav>
+
+      <div class="mx-auto grid max-w-7xl items-end gap-10 pt-24 lg:grid-cols-[1.05fr_.95fr] lg:pt-32">
+        <div class="max-w-3xl pb-8">
+          <p class="mb-4 inline-flex rounded-full bg-white/15 px-4 py-2 text-sm font-bold backdrop-blur">
+            Hindi-first and English-friendly language learning
+          </p>
+          <h1 class="text-5xl font-black leading-[1.02] tracking-normal sm:text-6xl lg:text-7xl">
+            Learn Indian languages with play, script, and culture.
+          </h1>
+          <p class="mt-6 max-w-2xl text-lg leading-8 text-white/90">
+            A unified learning app for Hindi, Marathi, Bengali, Gujarati, Tamil, Telugu, Punjabi, Malayalam, Kannada, Odia, Assamese, Urdu, Kashmiri, Nepali, and Sindhi.
+          </p>
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a href="#waitlist" class="rounded-lg bg-[#ffbf3f] px-6 py-4 text-center text-base font-black text-slate-950 shadow-xl">Get early access</a>
+            <a href="#features" class="rounded-lg border border-white/60 px-6 py-4 text-center text-base font-black text-white backdrop-blur">Explore features</a>
+          </div>
+        </div>
+
+        <div class="mb-2 grid gap-3 rounded-lg bg-white/12 p-4 backdrop-blur-md">
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <div class="rounded-md bg-white p-4 text-slate-950"><strong class="block text-2xl">15</strong><span class="text-xs font-bold uppercase text-slate-500">Languages</span></div>
+            <div class="rounded-md bg-white p-4 text-slate-950"><strong class="block text-2xl">5</strong><span class="text-xs font-bold uppercase text-slate-500">Exercise types</span></div>
+            <div class="rounded-md bg-white p-4 text-slate-950"><strong class="block text-2xl">3</strong><span class="text-xs font-bold uppercase text-slate-500">Levels</span></div>
+          </div>
+          <div class="rounded-md bg-[#0f766e] p-5">
+            <p class="text-sm font-bold uppercase tracking-wide text-teal-100">Today's lesson</p>
+            <p class="mt-2 text-2xl font-black">Match it: नमस्ते -> Hello</p>
+            <div class="mt-4 grid grid-cols-2 gap-3 text-sm font-bold">
+              <button class="rounded-md bg-white px-4 py-3 text-teal-950">धन्यवाद</button>
+              <button class="rounded-md bg-[#ffbf3f] px-4 py-3 text-slate-950">Thank you</button>
+              <button class="rounded-md bg-white px-4 py-3 text-teal-950">पानी</button>
+              <button class="rounded-md bg-white px-4 py-3 text-teal-950">Water</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="levels" class="px-5 py-20 sm:px-8 lg:px-12">
+      <div class="mx-auto max-w-7xl">
+        <h2 class="max-w-3xl text-4xl font-black tracking-normal">One platform for every learner stage.</h2>
+        <div class="mt-10 grid gap-5 md:grid-cols-3">
+          <article class="rounded-lg border border-emerald-200 bg-white p-6 shadow-sm">
+            <h3 class="text-2xl font-black">Beginner</h3>
+            <p class="mt-3 text-slate-600">Script-first lessons, romanization, gentle feedback, soft hearts, everyday phrases.</p>
+          </article>
+          <article class="rounded-lg border border-amber-200 bg-white p-6 shadow-sm">
+            <h3 class="text-2xl font-black">Intermediate</h3>
+            <p class="mt-3 text-slate-600">Mixed drills, review queue, practical grammar, streaks, stronger sentence practice.</p>
+          </article>
+          <article class="rounded-lg border border-rose-200 bg-white p-6 shadow-sm">
+            <h3 class="text-2xl font-black">Expert</h3>
+            <p class="mt-3 text-slate-600">Dense practice, strict-mode-ready challenges, leaderboard play, culture-rich modules.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="bg-white px-5 py-20 sm:px-8 lg:px-12">
+      <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[.8fr_1.2fr]">
+        <div>
+          <h2 class="text-4xl font-black tracking-normal">Built from 13 experiments into one production path.</h2>
+          <p class="mt-5 text-lg leading-8 text-slate-600">The unified app combines the best of every repo: curriculum, Expo direction, Vite web, OpenAPI contracts, Drizzle schema, Framer Motion transitions, PWA support, and robotic QA.</p>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg bg-teal-50 p-5"><strong>Unified ExercisePlayer</strong><p class="mt-2 text-slate-600">One player for lessons and review across all exercise types.</p></div>
+          <div class="rounded-lg bg-amber-50 p-5"><strong>Match it fixed</strong><p class="mt-2 text-slate-600">Two-column matching with stable pair IDs and polished feedback.</p></div>
+          <div class="rounded-lg bg-rose-50 p-5"><strong>Soft hearts</strong><p class="mt-2 text-slate-600">Infinite retries for MVP, strict mode ready for later.</p></div>
+          <div class="rounded-lg bg-indigo-50 p-5"><strong>Robotic QA</strong><p class="mt-2 text-slate-600">21 users x 15 languages x all lessons before every release.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pwa" class="px-5 py-20 sm:px-8 lg:px-12">
+      <div class="mx-auto max-w-7xl rounded-lg bg-slate-950 p-8 text-white md:p-12">
+        <h2 class="text-4xl font-black tracking-normal">Offline-ready from day one.</h2>
+        <p class="mt-4 max-w-3xl text-lg leading-8 text-slate-300">The PWA shell caches the app, seed curriculum, and recent lesson responses so students can keep practicing through weak network conditions. Real API mode can sync progress when connectivity returns.</p>
+      </div>
+    </section>
+
+    <section id="waitlist" class="bg-[#0f766e] px-5 py-20 text-white sm:px-8 lg:px-12">
+      <div class="mx-auto max-w-3xl text-center">
+        <h2 class="text-4xl font-black tracking-normal">Help build the Indian language learning commons.</h2>
+        <p class="mt-4 text-lg leading-8 text-teal-50">Join as a learner, contributor, teacher, language reviewer, or early sponsor.</p>
+        <form class="mt-8 grid gap-3 sm:grid-cols-[1fr_auto]">
+          <input aria-label="Email address" type="email" placeholder="you@example.com" class="rounded-lg border-0 px-5 py-4 text-slate-950" />
+          <button class="rounded-lg bg-[#ffbf3f] px-7 py-4 font-black text-slate-950">Join waitlist</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
+
