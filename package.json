@@ -11,6 +11,9 @@
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --filter \"./packages/**\" --if-present run typecheck",
     "seed": "tsx packages/curriculum/src/seed-db.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "test:robotic": "pnpm --filter @indori/robotic-tests run test",
     "serve": "pnpm --filter @workspace/indori-wuolingo run serve"
   },
@@ -19,7 +22,9 @@
     "serverless-http": "^4.0.0"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "2.1.9",
     "prettier": "^3.8.4",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "vitest": "2.1.9"
   }
 }

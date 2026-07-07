@@ -8,6 +8,12 @@ import {
   CompleteLessonBody,
   CompleteLessonResponse,
 } from "@workspace/api-zod";
+import {
+  clampCorrectCount,
+  computeStars,
+  computeStreak,
+  computeXpEarned,
+} from "../lib/progress.js";
 
 const router: IRouter = Router();
 
@@ -50,15 +56,6 @@ router.get("/lessons/:lessonId", async (req, res): Promise<void> => {
   );
 });
 
-function computeStars(correctCount: number, totalCount: number): number {
-  if (totalCount <= 0) return 0;
-  const ratio = correctCount / totalCount;
-  if (ratio >= 1) return 3;
-  if (ratio >= 0.7) return 2;
-  if (ratio > 0) return 1;
-  return 0;
-}
-
 router.post("/lessons/:lessonId/complete", async (req, res): Promise<void> => {
   const params = CompleteLessonParams.safeParse(req.params);
   if (!params.success) {
@@ -99,32 +96,25 @@ router.post("/lessons/:lessonId/complete", async (req, res): Promise<void> => {
 
   // Authoritative total from DB; clamp correct count to valid range
   const serverTotal = exercises.length;
-  const safeCorrect = Math.min(Math.max(0, correctCount), serverTotal);
+  const safeCorrect = clampCorrectCount(correctCount, serverTotal);
   const stars = computeStars(safeCorrect, serverTotal);
 
   // XP is idempotent: only award on first completion, or when stars improve
   const prevStars = existing?.stars ?? -1;
   const isFirstCompletion = !existing;
-  const isImprovedStars = stars > prevStars;
-  const xpEarned = isFirstCompletion
-    ? stars > 0
-      ? lesson.xpReward
-      : Math.round(lesson.xpReward / 2)
-    : isImprovedStars
-      ? Math.round(lesson.xpReward * 0.25) // partial bonus for improvement only
-      : 0;
+  const xpEarned = computeXpEarned({
+    isFirstCompletion,
+    stars,
+    prevStars,
+    xpReward: lesson.xpReward,
+  });
 
   const today = new Date().toISOString().slice(0, 10);
-  const wasActiveYesterday = (() => {
-    if (!user.lastActiveDate) return false;
-    const diffDays = Math.round(
-      (new Date(today).getTime() - new Date(user.lastActiveDate).getTime()) /
-        (1000 * 60 * 60 * 24),
-    );
-    return diffDays === 1;
-  })();
-  const wasActiveToday = user.lastActiveDate === today;
-  const newStreak = wasActiveToday ? user.streak : wasActiveYesterday ? user.streak + 1 : 1;
+  const newStreak = computeStreak({
+    lastActiveDate: user.lastActiveDate,
+    streak: user.streak,
+    today,
+  });
 
   await db
     .insert(lessonProgressTable)

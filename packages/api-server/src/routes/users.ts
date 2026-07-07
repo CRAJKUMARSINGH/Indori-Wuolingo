@@ -16,6 +16,7 @@ import {
   GetUserStatsParams,
   GetUserStatsResponse,
 } from "@workspace/api-zod";
+import { computeBadges } from "../lib/progress.js";
 
 const router: IRouter = Router();
 
@@ -122,13 +123,11 @@ router.get("/users/:userId/stats", async (req, res): Promise<void> => {
     0,
   );
 
-  // Compute badges
-  const badges: string[] = [];
-  if (totalLessonsCompleted >= 1) badges.push("First Steps");
-  if (user.xp >= 100) badges.push("Century Club");
-  if (user.streak >= 7) badges.push("On Fire");
-  if (user.xp >= 500) badges.push("Rocket Learner");
-  if (user.xp >= 1000) badges.push("Champion");
+  const badges = computeBadges({
+    totalLessonsCompleted,
+    xp: user.xp,
+    streak: user.streak,
+  });
 
   res.json(
     GetUserStatsResponse.parse({
