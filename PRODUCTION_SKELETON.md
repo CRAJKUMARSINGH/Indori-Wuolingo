@@ -16,7 +16,7 @@ packages:
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "scripts": {
-    "dev": "pnpm --parallel --filter @indori/api --filter @indori/web dev",
+    "dev": "pnpm --parallel --filter @indilingo/api --filter @indilingo/web dev",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
@@ -195,7 +195,7 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["favicon.svg", "icons/*.png"],
       manifest: {
-        name: "Indori-Wuolingo",
+        name: "IndiLingo",
         short_name: "IndiLingo",
         start_url: "/",
         display: "standalone",

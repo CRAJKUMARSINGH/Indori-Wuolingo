@@ -3,7 +3,7 @@
 This note is tailored to the current local clone:
 
 ```txt
-C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\work\repos\Indori-Wuolingo
+C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\work\repos\IndiLingo
 ```
 
 Current observed state:
@@ -19,7 +19,7 @@ Current observed state:
 Copy the polished docs into the primary repo first:
 
 ```powershell
-$Repo = "C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\work\repos\Indori-Wuolingo"
+$Repo = "C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\work\repos\IndiLingo"
 $Out = "C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\outputs\indori-wuolingo-unified"
 
 Copy-Item "$Out\README.md" "$Repo\README.md" -Force
@@ -35,7 +35,7 @@ Copy-Item "$Out\docs\ROBOTIC_TEST_SUITE.md" "$Repo\docs\ROBOTIC_TEST_SUITE.md" -
 ## Then stage Indore10 into the final layout
 
 ```powershell
-$Repo = "C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\work\repos\Indori-Wuolingo"
+$Repo = "C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\work\repos\IndiLingo"
 $Indore10 = "C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\work\repos\Indore10"
 
 New-Item -ItemType Directory -Force -Path "$Repo\apps" | Out-Null
@@ -70,7 +70,7 @@ Do not treat the copied Indore10 code as finished until these are done:
 ## Suggested verification
 
 ```powershell
-cd "C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\work\repos\Indori-Wuolingo"
+cd "C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\work\repos\IndiLingo"
 git status --short
 pnpm install
 pnpm typecheck

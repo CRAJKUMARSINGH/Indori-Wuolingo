@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Indori-Wuolingo",
-    "slug": "indori-wuolingo",
+    "name": "IndiLingo",
+    "slug": "indilingo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "indori-wuolingo",
+    "scheme": "indilingo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {

@@ -1,4 +1,4 @@
-import { db, languagesTable, unitsTable, lessonsTable, exercisesTable } from "@indori/db";
+import { db, languagesTable, unitsTable, lessonsTable, exercisesTable } from "@indilingo/db";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 

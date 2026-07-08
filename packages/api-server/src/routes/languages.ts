@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { db, languagesTable } from "@indori/db";
+import { db, languagesTable } from "@indilingo/db";
 import { ListLanguagesResponse } from "@workspace/api-zod";
 import { asc } from "drizzle-orm";
 

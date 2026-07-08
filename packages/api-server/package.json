@@ -1,5 +1,5 @@
 {
-  "name": "@indori/api-server",
+  "name": "@indilingo/api-server",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@workspace/api-zod": "workspace:*",
-    "@indori/db": "workspace:*",
+    "@indilingo/db": "workspace:*",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "drizzle-orm": "catalog:",

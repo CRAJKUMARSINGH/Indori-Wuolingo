@@ -1,4 +1,4 @@
-# Contributing to Indori Wuolingo
+# Contributing to IndiLingo
 
 Thank you for your interest in contributing. This guide covers the development workflow, code standards, and PR process.
 
@@ -46,8 +46,8 @@ All contributors must follow the [Code of Conduct](CODE_OF_CONDUCT.md). Violatio
 
 ```bash
 # Clone the repo
-git clone https://github.com/CRAJKUMARSINGH/Indori-Wuolingo.git
-cd Indori-Wuolingo
+git clone https://github.com/CRAJKUMARSINGH/IndiLingo.git
+cd IndiLingo
 
 # Install all workspace packages
 pnpm install

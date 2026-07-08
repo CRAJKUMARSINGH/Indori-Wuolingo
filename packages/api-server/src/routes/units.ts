@@ -5,7 +5,7 @@ import {
   unitsTable,
   lessonsTable,
   lessonProgressTable,
-} from "@indori/db";
+} from "@indilingo/db";
 import { ListUnitsForLanguageParams, ListUnitsForLanguageResponse } from "@workspace/api-zod";
 
 const router: IRouter = Router();

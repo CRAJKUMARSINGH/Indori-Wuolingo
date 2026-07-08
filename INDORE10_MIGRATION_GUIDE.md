@@ -1,15 +1,15 @@
 # Indore10 Migration Guide
 
-Use `Indore10` as the **main implementation donor** for the unified `Indori-Wuolingo` repo. Do not rename the final product to Indore10. Think of it as the best working draft whose useful parts should be absorbed into the final home.
+Use `Indore10` as the **main implementation donor** for the unified `IndiLingo` repo. Do not rename the final product to Indore10. Think of it as the best working draft whose useful parts should be absorbed into the final home.
 
 ## Final decision
 
 ```txt
-Final repo / public brand: Indori-Wuolingo
+Final repo / public brand: IndiLingo
 Short app name in UI:      IndiLingo
 Main code donor:           Indore10
 Mobile donor:              Indore09
-Reference docs donor:      Indori-Wuolingo, Indore03, Indore04, Indore08, Indore12
+Reference docs donor:      IndiLingo, Indore03, Indore04, Indore08, Indore12
 ```
 
 ## What to copy from Indore10
@@ -108,7 +108,7 @@ Keep pure curriculum data separate from Drizzle insert logic.
 
 ## Exact migration sequence
 
-1. Start from the final `Indori-Wuolingo` repo.
+1. Start from the final `IndiLingo` repo.
 2. Create `apps/web`, `apps/api`, and `packages/*`.
 3. Copy `Indore10/artifacts/indilingo` into `apps/web`.
 4. Copy `Indore10/artifacts/api-server` into `apps/api`.

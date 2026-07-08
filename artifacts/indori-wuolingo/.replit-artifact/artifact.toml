@@ -1,6 +1,6 @@
 kind = "web"
 previewPath = "/"
-title = "Indori Wuolingo"
+title = "IndiLingo"
 version = "1.0.0"
 id = "artifacts/indori-wuolingo"
 router = "path"

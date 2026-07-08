@@ -1,4 +1,6 @@
+# IndiLingo
 
+Learn Indian languages through short lessons, gamified progress, daily streaks, and adaptive review.
 
 ## Indore Series
 

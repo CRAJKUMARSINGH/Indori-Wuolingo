@@ -18,7 +18,7 @@ export default function WelcomeScreen() {
         <View style={styles.logoCircle}>
           <Text style={styles.logoText}>ह</Text>
         </View>
-        <Text style={styles.appName}>Indori Wuolingo</Text>
+        <Text style={styles.appName}>IndiLingo</Text>
         <Text style={styles.tagline}>Learn Indian Languages the fun way</Text>
       </View>
 

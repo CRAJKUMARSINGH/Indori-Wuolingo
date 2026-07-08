@@ -1,13 +1,13 @@
-# App_Theme.md — Indori-Wuolingo Developer Theme Document
+# App_Theme.md — IndiLingo Developer Theme Document
 
 > **This document is the single source of truth for what this product is, where it stands today, and the roadmap for taking it to enterprise grade.**
 > Every developer on this team should read it before writing a line of code.
 
 ---
 
-## 1. What Is Indori-Wuolingo?
+## 1. What Is IndiLingo?
 
-Indori-Wuolingo is a **gamified Indian regional language learning platform** — India's answer to Duolingo, built specifically for the Indian linguistic landscape.
+IndiLingo is a **gamified Indian regional language learning platform** — India's answer to Duolingo, built specifically for the Indian linguistic landscape.
 
 India has 22 constitutionally recognised languages and 780+ dialects. No dedicated gamified platform exists for them. Global competitors (Duolingo, Babbel) cover fewer than 3 Indian languages with shallow content. We exist to close that gap.
 
@@ -177,7 +177,7 @@ Every exercise has a `baseLanguage` field: `"hi"` (Hindi) or `"en"` (English).
 ## 5. Architecture Overview
 
 ```
-Indori-Wuolingo/
+IndiLingo/
 │
 ├── lib/                          ← Shared packages (source of truth)
 │   ├── api-spec/openapi.yaml     ← OpenAPI spec — NEVER drift from this
@@ -444,6 +444,6 @@ pnpm --filter @workspace/db run push       # Apply to dev DB
 
 ---
 
-*Document owner: Indori-Wuolingo core team*
+*Document owner: IndiLingo core team*
 *Last updated: June 2026*
 *Review every quarter — update Phase 1/2/3 items as they are completed*

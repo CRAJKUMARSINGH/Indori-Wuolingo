@@ -2,7 +2,7 @@
 
 ## Current MVP behavior
 
-Indori-Wuolingo uses **soft hearts** for the MVP.
+IndiLingo uses **soft hearts** for the MVP.
 
 Wrong answers:
 

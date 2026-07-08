@@ -12,7 +12,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons/*.png'],
       manifest: {
-        name: 'Indori-Wuolingo',
+        name: 'IndiLingo',
         short_name: 'IndiLingo',
         description: 'Learn Indian languages — offline-ready lessons and reviews.',
         theme_color: '#0f766e',

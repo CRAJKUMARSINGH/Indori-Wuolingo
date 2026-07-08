@@ -7,7 +7,7 @@ import {
   lessonsTable,
   unitsTable,
   languagesTable,
-} from "@indori/db";
+} from "@indilingo/db";
 import {
   CreateUserBody,
   CreateUserResponse,

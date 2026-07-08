@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { desc } from "drizzle-orm";
-import { db, usersTable } from "@indori/db";
+import { db, usersTable } from "@indilingo/db";
 import { GetLeaderboardResponse } from "@workspace/api-zod";
 
 const router: IRouter = Router();

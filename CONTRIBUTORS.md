@@ -1,6 +1,6 @@
-# Contributing to Indori-Wuolingo
+# Contributing to IndiLingo
 
-> **Indori-Wuolingo** is a Duolingo-style mobile app for learning Indian languages.  
+> **IndiLingo** is a Duolingo-style mobile app for learning Indian languages.  
 > The first track is **English → Hindi**. The codebase is built to expand to Marathi, Tamil, Bengali, Telugu, Kannada, and Gujarati without rebuilding the app.
 
 ---

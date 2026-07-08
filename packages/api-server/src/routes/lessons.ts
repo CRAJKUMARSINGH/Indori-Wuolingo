@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { eq, sql } from "drizzle-orm";
-import { db, lessonsTable, exercisesTable, usersTable, lessonProgressTable } from "@indori/db";
+import { db, lessonsTable, exercisesTable, usersTable, lessonProgressTable } from "@indilingo/db";
 import {
   GetLessonParams,
   GetLessonResponse,

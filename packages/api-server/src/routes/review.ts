@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { eq, desc, asc } from "drizzle-orm";
-import { db, exerciseMistakesTable, exercisesTable } from "@indori/db";
+import { db, exerciseMistakesTable, exercisesTable } from "@indilingo/db";
 import {
   RecordMistakeParams,
   RecordMistakeBody,

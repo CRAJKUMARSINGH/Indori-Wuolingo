@@ -16,7 +16,7 @@
 
 To report a vulnerability, please follow these steps:
 
-1. **Email the maintainer** at the address listed on the GitHub profile, with the subject line: `[SECURITY] Indori Wuolingo — <brief description>`.
+1. **Email the maintainer** at the address listed on the GitHub profile, with the subject line: `[SECURITY] IndiLingo — <brief description>`.
 2. Include the following in your report:
    - Description of the vulnerability
    - Steps to reproduce

@@ -1,8 +1,8 @@
-# Indore10 copy plan for the unified Indori-Wuolingo repo.
+# Indore10 copy plan for the unified IndiLingo repo.
 # Edit $FinalRepo before running. This script intentionally copies only source folders
 # and does not delete anything.
 
-$FinalRepo = "C:\path\to\Indori-Wuolingo"
+$FinalRepo = "C:\path\to\IndiLingo"
 $SourceRoot = "C:\Users\Rajkumar\Documents\Codex\2026-07-07\r\work\repos\Indore10"
 
 if (!(Test-Path $FinalRepo)) {

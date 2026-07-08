@@ -30,7 +30,7 @@ export default function OnboardingWelcome() {
             </div>
             <div className="space-y-4">
               <p className="text-sm font-semibold uppercase tracking-[0.28em] text-white/70">
-                Welcome to Indori Wuolingo
+                Welcome to IndiLingo
               </p>
               <h1 className="max-w-2xl text-4xl font-black tracking-tight sm:text-5xl">
                 Start learning with the same onboarding flow your mobile app already has.

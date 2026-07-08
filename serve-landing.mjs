@@ -2,7 +2,7 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-const root = path.resolve("outputs/indori-wuolingo-unified");
+const root = path.resolve("outputs/indilingo-unified");
 const port = Number(process.env.PORT || 8089);
 
 const types = {

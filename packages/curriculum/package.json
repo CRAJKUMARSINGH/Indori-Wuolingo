@@ -1,5 +1,5 @@
 {
-  "name": "@indori/curriculum",
+  "name": "@indilingo/curriculum",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@indori/db": "workspace:*"
+    "@indilingo/db": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "catalog:",

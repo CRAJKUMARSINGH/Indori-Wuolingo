@@ -25,18 +25,18 @@
 **Date:** June 2026 · **Repl:** Original repl (Indore series)
 
 ### User Request
-> "I want to build something like Duolingo but for Indian languages — Hindi, Marathi, Bengali, all the major ones. I have repos Indore01 through Indore10 plus Indori-Wuolingo as the brand. Can we merge everything into one clean app?"
+> "I want to build something like Duolingo but for Indian languages — Hindi, Marathi, Bengali, all the major ones. I have repos Indore01 through Indore10 plus IndiLingo as the brand. Can we merge everything into one clean app?"
 
 ### What Was Discussed
-- Reviewed the 10 GitHub repos (Indore01–Indore10) and the Indori-Wuolingo umbrella repo
+- Reviewed the 10 GitHub repos (Indore01–Indore10) and the IndiLingo umbrella repo
 - Identified the strongest capability in each repo:
   - **Indore02** → backend / API patterns
   - **Indore03** → lesson player UX
   - **Indore04** → leaderboard / gamification
   - **Indore08** → offline support, badge system, review queue concept
   - **Indore09** → expanded curriculum (7 languages)
-  - **Indori-Wuolingo** → overall brand and product vision
-- Decided on product name: **IndiLingo** (child of the Indori-Wuolingo brand)
+  - **IndiLingo** → overall brand and product vision
+- Decided on product name: **IndiLingo** (child of the IndiLingo brand)
 - Agreed on tech stack: React + Vite frontend, Express API, PostgreSQL + Drizzle ORM, pnpm monorepo
 - Agreed on no-login onboarding: name entry only, `userId` persisted to localStorage
 
@@ -258,7 +258,7 @@ Simple frequency-weighted queue (not full SRS intervals):
 Previous 6 sessions were in a separate repl. This session rebuilt everything from scratch in a clean monorepo, incorporating all features and fixing bugs found in code review.
 
 ### User Request
-> "Build the definitive final version incorporating all features from the previous 6 sessions. Also update the merger blueprint HTML to cover all 12 repos (Indore01–Indore10 + Indori-Wuolingo + IndiLingo), with Indore10 being the latest."
+> "Build the definitive final version incorporating all features from the previous 6 sessions. Also update the merger blueprint HTML to cover all 12 repos (Indore01–Indore10 + IndiLingo + IndiLingo), with Indore10 being the latest."
 
 ### Sequence of Work
 
@@ -403,10 +403,10 @@ pnpm --filter @workspace/indilingo run dev     # port from $PORT
 **Date:** July 5, 2026
 
 ### User Request
-> "Thirteen apps in public repo `https://github.com/CRAJKUMARSINGH/Indori-Wuolingo` and in `https://github.com/CRAJKUMARSINGH/Indore**` integrate into one latest version in `infire12`. Save whole chat log as `Creat.md`. App features must appear in `README.md` in repo landing at GitHub GitLab."
+> "Thirteen apps in public repo `https://github.com/CRAJKUMARSINGH/IndiLingo` and in `https://github.com/CRAJKUMARSINGH/Indore**` integrate into one latest version in `infire12`. Save whole chat log as `Creat.md`. App features must appear in `README.md` in repo landing at GitHub GitLab."
 
 ### What Was Done
-- Resolved the source set as `Indore01` through `Indore12` plus `Indori-Wuolingo`
+- Resolved the source set as `Indore01` through `Indore12` plus `IndiLingo`
 - Verified that `Indore12` is the newest integrated public codebase
 - Copied the latest merged workspace into a clean final folder named `infire12`
 - Preserved the running merged app structure under:
