@@ -6,12 +6,13 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface User {
+export interface LessonSummary {
   id: number;
-  name: string;
-  xp: number;
-  streak: number;
+  unitId: number;
+  title: string;
+  orderIndex: number;
+  xpReward: number;
   /** @nullable */
-  lastActiveDate?: string | null;
-  createdAt: string;
+  stars?: number | null;
+  completed?: boolean;
 }

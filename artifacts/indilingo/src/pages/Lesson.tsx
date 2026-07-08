@@ -108,7 +108,7 @@ export function Lesson() {
   return (
     <ExercisePlayer 
       exercises={lesson.exercises} 
-      lessonId={lessonId.toString()} 
+      lessonId={lessonId} 
       onComplete={handleComplete} 
       isReviewMode={false} 
     />

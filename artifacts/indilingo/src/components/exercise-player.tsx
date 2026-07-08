@@ -6,12 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { X, Heart, CheckCircle2, XCircle } from 'lucide-react';
-import { VideoPlayer } from '@/components/VideoPlayer';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ExercisePlayerProps {
   exercises: Exercise[];
-  lessonId?: string;
+  lessonId?: number;
   onComplete: (correctCount: number, totalCount: number) => void;
   isReviewMode?: boolean;
 }
@@ -78,6 +78,8 @@ export function ExercisePlayer({ exercises, onComplete, isReviewMode }: Exercise
     if (isReviewMode && userId) {
       masterExercise.mutate({ exerciseId: currentExercise.id, data: { userId } });
     }
+    const audio = new Audio('/correct.mp3');
+    audio.play().catch(() => {});
   };
 
   const registerIncorrect = () => {
@@ -169,11 +171,6 @@ export function ExercisePlayer({ exercises, onComplete, isReviewMode }: Exercise
       case 'script_practice':
         return (
           <div className="flex flex-col items-center justify-center space-y-8">
-            {currentExercise.videoUrl && (
-              <div className="w-full mb-4">
-                <VideoPlayer src={currentExercise.videoUrl} />
-              </div>
-            )}
             <h2 className="text-2xl font-bold text-center">{currentExercise.question}</h2>
             {currentExercise.nativeScript && (
               <div className="text-8xl font-serif text-primary py-4">{currentExercise.nativeScript}</div>

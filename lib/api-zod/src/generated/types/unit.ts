@@ -5,13 +5,13 @@
  * IndiLingo — Indian regional language learning platform API
  * OpenAPI spec version: 0.1.0
  */
+import type { UnitUnitType } from './unitUnitType';
 
-export interface User {
+export interface Unit {
   id: number;
-  name: string;
-  xp: number;
-  streak: number;
-  /** @nullable */
-  lastActiveDate?: string | null;
-  createdAt: string;
+  languageId: number;
+  title: string;
+  description: string;
+  orderIndex: number;
+  unitType: UnitUnitType;
 }

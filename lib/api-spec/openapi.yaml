@@ -3,7 +3,7 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification for IndiLingo - learn Indian regional languages with alphabet/script lessons
+  description: IndiLingo — Indian regional language learning platform API
 servers:
   - url: /api
     description: Base API path
@@ -11,17 +11,15 @@ tags:
   - name: health
     description: Health operations
   - name: languages
-    description: Language courses
-  - name: units
-    description: Course units and lessons
+    description: Language and curriculum
   - name: lessons
-    description: Lesson content and exercises
+    description: Lesson and exercise operations
   - name: users
-    description: Learner profiles
+    description: User profile and progress
   - name: leaderboard
     description: Leaderboard rankings
-  - name: review
-    description: Spaced repetition review
+  - name: exercises
+    description: Exercise mistake tracking
 
 paths:
   /healthz:
@@ -37,11 +35,141 @@ paths:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
 
+  /languages:
+    get:
+      operationId: listLanguages
+      tags: [languages]
+      summary: List all available languages
+      responses:
+        "200":
+          description: List of languages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Language"
+
+  /languages/{languageId}/units:
+    get:
+      operationId: getLanguageUnits
+      tags: [languages]
+      summary: Get units for a language (no user progress)
+      parameters:
+        - in: path
+          name: languageId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Units without user progress
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UnitWithProgress"
+        "404":
+          description: Language not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /users/{userId}/languages/{languageId}/units:
+    get:
+      operationId: getUserLanguageUnits
+      tags: [users]
+      summary: Get units for a language with user progress
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: languageId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Units with user progress
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UnitWithProgress"
+        "404":
+          description: Language or user not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /lessons/{lessonId}:
+    get:
+      operationId: getLesson
+      tags: [lessons]
+      summary: Get a lesson with its exercises
+      parameters:
+        - in: path
+          name: lessonId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Lesson with exercises
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LessonWithExercises"
+        "404":
+          description: Lesson not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /lessons/{lessonId}/complete:
+    post:
+      operationId: completeLesson
+      tags: [lessons]
+      summary: Mark a lesson as complete (server-authoritative XP/streak/stars)
+      parameters:
+        - in: path
+          name: lessonId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LessonCompleteInput"
+      responses:
+        "200":
+          description: Completion result with updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LessonCompleteResult"
+        "404":
+          description: Lesson or user not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
   /users:
     post:
       operationId: createUser
       tags: [users]
-      summary: Create a new learner profile
+      summary: Create a new user (onboarding)
       requestBody:
         required: true
         content:
@@ -50,7 +178,7 @@ paths:
               $ref: "#/components/schemas/UserInput"
       responses:
         "201":
-          description: Created
+          description: Created user
           content:
             application/json:
               schema:
@@ -60,120 +188,81 @@ paths:
     get:
       operationId: getUser
       tags: [users]
-      summary: Get a learner profile with progress stats
+      summary: Get user profile
       parameters:
-        - name: userId
-          in: path
+        - in: path
+          name: userId
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "200":
-          description: OK
+          description: User profile
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
         "404":
-          description: Not found
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
-  /languages:
+  /users/{userId}/stats:
     get:
-      operationId: listLanguages
-      tags: [languages]
-      summary: List all 15 available Indian regional languages
+      operationId: getUserStats
+      tags: [users]
+      summary: Get per-language progress and badge status
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
       responses:
         "200":
-          description: OK
+          description: User stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserStats"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /users/{userId}/review:
+    get:
+      operationId: getReviewQueue
+      tags: [users]
+      summary: Get spaced-repetition review queue for user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Review queue of exercises
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Language"
-
-  /languages/{languageId}/units/{userId}:
-    get:
-      operationId: listUnitsForLanguage
-      tags: [units]
-      summary: List units (with lessons) for a language, including user progress
-      parameters:
-        - name: languageId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/UnitWithLessons"
-
-  /lessons/{lessonId}:
-    get:
-      operationId: getLesson
-      tags: [lessons]
-      summary: Get a lesson with its exercises
-      parameters:
-        - name: lessonId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/LessonWithExercises"
-        "404":
-          description: Not found
-
-  /lessons/{lessonId}/complete:
-    post:
-      operationId: completeLesson
-      tags: [lessons]
-      summary: Submit lesson results and update XP, streak, and progress
-      parameters:
-        - name: lessonId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/LessonCompletion"
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/LessonResult"
-        "404":
-          description: Not found
+                  $ref: "#/components/schemas/ReviewExercise"
 
   /leaderboard:
     get:
       operationId: getLeaderboard
       tags: [leaderboard]
-      summary: Get the top learners by XP
+      summary: Get global leaderboard rankings
       responses:
         "200":
-          description: OK
+          description: Leaderboard entries
           content:
             application/json:
               schema:
@@ -184,191 +273,191 @@ paths:
   /exercises/{exerciseId}/mistake:
     post:
       operationId: recordMistake
-      tags: [review]
-      summary: Record a missed exercise for spaced repetition
+      tags: [exercises]
+      summary: Record a wrong answer for spaced repetition
       parameters:
-        - name: exerciseId
-          in: path
+        - in: path
+          name: exerciseId
           required: true
           schema:
-            type: string
+            type: integer
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ReviewAction"
+              $ref: "#/components/schemas/MistakeInput"
       responses:
         "200":
-          description: OK
+          description: Mistake recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
 
   /exercises/{exerciseId}/master:
     post:
       operationId: masterExercise
-      tags: [review]
-      summary: Mark an exercise as mastered (remove from review queue)
+      tags: [exercises]
+      summary: Clear an exercise from the review queue (correct on review)
       parameters:
-        - name: exerciseId
-          in: path
+        - in: path
+          name: exerciseId
           required: true
           schema:
-            type: string
+            type: integer
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ReviewAction"
+              $ref: "#/components/schemas/MistakeInput"
       responses:
         "200":
-          description: OK
-
-  /users/{userId}/review:
-    get:
-      operationId: getReviewExercises
-      tags: [review]
-      summary: Get exercises queued for review (spaced repetition)
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
+          description: Exercise mastered
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Exercise"
-
-  /users/{userId}/stats:
-    get:
-      operationId: getUserStats
-      tags: [users]
-      summary: Get detailed progress stats for a user (lessons completed per language, streaks, XP)
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserStats"
+                $ref: "#/components/schemas/SuccessResponse"
 
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
         status:
           type: string
-      required:
-        - status
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    SuccessResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
 
     Language:
       type: object
+      required: [id, name, nativeName, flagEmoji, scriptName, colorHex]
       properties:
         id:
-          type: string
+          type: integer
         name:
           type: string
         nativeName:
           type: string
         flagEmoji:
           type: string
-        colorTheme:
-          type: string
-        description:
-          type: string
         scriptName:
           type: string
-        totalLearners:
-          type: integer
-        order:
-          type: integer
-      required:
-        - id
-        - name
-        - nativeName
-        - flagEmoji
-        - colorTheme
-        - description
-        - scriptName
-        - totalLearners
-        - order
+        colorHex:
+          type: string
 
-    UnitWithLessons:
+    Unit:
       type: object
+      required: [id, languageId, title, description, orderIndex, unitType]
       properties:
         id:
-          type: string
+          type: integer
         languageId:
-          type: string
+          type: integer
         title:
           type: string
         description:
           type: string
-        order:
+        orderIndex:
           type: integer
         unitType:
           type: string
-        lessons:
-          type: array
-          items:
-            $ref: "#/components/schemas/LessonProgress"
-      required:
-        - id
-        - languageId
-        - title
-        - description
-        - order
-        - unitType
-        - lessons
+          enum: [script, vocabulary, phrases, conversation]
 
-    LessonProgress:
+    LessonSummary:
       type: object
+      required: [id, unitId, title, orderIndex, xpReward]
       properties:
         id:
-          type: string
+          type: integer
         unitId:
-          type: string
+          type: integer
         title:
           type: string
-        order:
+        orderIndex:
           type: integer
         xpReward:
           type: integer
+        stars:
+          type: ["integer", "null"]
         completed:
           type: boolean
-        stars:
+
+    UnitWithProgress:
+      type: object
+      required: [id, languageId, title, description, orderIndex, unitType, lessons, completedLessons, totalLessons]
+      properties:
+        id:
           type: integer
-      required:
-        - id
-        - unitId
-        - title
-        - order
-        - xpReward
-        - completed
-        - stars
+        languageId:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        orderIndex:
+          type: integer
+        unitType:
+          type: string
+          enum: [script, vocabulary, phrases, conversation]
+        lessons:
+          type: array
+          items:
+            $ref: "#/components/schemas/LessonSummary"
+        completedLessons:
+          type: integer
+        totalLessons:
+          type: integer
+
+    Exercise:
+      type: object
+      required: [id, lessonId, type, question, correctAnswer, options]
+      properties:
+        id:
+          type: integer
+        lessonId:
+          type: integer
+        type:
+          type: string
+          enum: [script_practice, multiple_choice, translate, fill_blank, match_pairs]
+        question:
+          type: string
+        correctAnswer:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+        nativeScript:
+          type: ["string", "null"]
+        romanization:
+          type: ["string", "null"]
 
     LessonWithExercises:
       type: object
+      required: [id, unitId, title, orderIndex, xpReward, exercises]
       properties:
         id:
-          type: string
+          type: integer
         unitId:
-          type: string
+          type: integer
         title:
           type: string
-        order:
+        orderIndex:
           type: integer
         xpReward:
           type: integer
@@ -376,121 +465,89 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Exercise"
-      required:
-        - id
-        - unitId
-        - title
-        - order
-        - xpReward
-        - exercises
 
-    Exercise:
+    LessonCompleteInput:
       type: object
-      properties:
-        id:
-          type: string
-        lessonId:
-          type: string
-        type:
-          type: string
-          description: "Exercise type: multiple_choice, translate, match_pairs, fill_blank, script_practice"
-        prompt:
-          type: string
-        options:
-          type: array
-          items:
-            type: string
-        correctAnswer:
-          type: string
-        romanization:
-          type: ["string", "null"]
-          description: "Romanized pronunciation guide (used in script_practice and translate exercises)"
-        nativeScript:
-          type: ["string", "null"]
-          description: "The native script character or word being taught"
-        order:
-          type: integer
-      required:
-        - id
-        - lessonId
-        - type
-        - prompt
-        - options
-        - correctAnswer
-        - order
-
-    LessonCompletion:
-      type: object
+      required: [userId, correctCount]
       properties:
         userId:
-          type: string
+          type: integer
         correctCount:
           type: integer
-        totalCount:
-          type: integer
-      required:
-        - userId
-        - correctCount
-        - totalCount
 
-    LessonResult:
+    LessonCompleteResult:
       type: object
+      required: [xpEarned, stars, streakDays, totalXp]
       properties:
         xpEarned:
           type: integer
         stars:
           type: integer
-        user:
-          $ref: "#/components/schemas/User"
-      required:
-        - xpEarned
-        - stars
-        - user
+        streakDays:
+          type: integer
+        totalXp:
+          type: integer
 
     User:
       type: object
+      required: [id, name, xp, streak, createdAt]
       properties:
         id:
-          type: string
+          type: integer
         name:
           type: string
         xp:
           type: integer
         streak:
           type: integer
-        hearts:
-          type: integer
         lastActiveDate:
           type: ["string", "null"]
         createdAt:
           type: string
-      required:
-        - id
-        - name
-        - xp
-        - streak
-        - hearts
-        - lastActiveDate
-        - createdAt
 
     UserInput:
       type: object
+      required: [name]
       properties:
         name:
           type: string
-      required:
-        - name
+          minLength: 1
+
+    LanguageProgress:
+      type: object
+      required: [languageId, languageName, nativeName, flagEmoji, completedLessons, totalLessons]
+      properties:
+        languageId:
+          type: integer
+        languageName:
+          type: string
+        nativeName:
+          type: string
+        flagEmoji:
+          type: string
+        completedLessons:
+          type: integer
+        totalLessons:
+          type: integer
+
+    Badge:
+      type: object
+      required: [id, name, description, unlocked]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        unlocked:
+          type: boolean
 
     UserStats:
       type: object
+      required: [userId, languageProgress, badges]
       properties:
         userId:
-          type: string
-        totalLessonsCompleted:
-          type: integer
-        totalXp:
-          type: integer
-        streak:
           type: integer
         languageProgress:
           type: array
@@ -499,53 +556,52 @@ components:
         badges:
           type: array
           items:
+            $ref: "#/components/schemas/Badge"
+
+    ReviewExercise:
+      type: object
+      required: [id, lessonId, type, question, correctAnswer, options, missedCount]
+      properties:
+        id:
+          type: integer
+        lessonId:
+          type: integer
+        type:
+          type: string
+          enum: [script_practice, multiple_choice, translate, fill_blank, match_pairs]
+        question:
+          type: string
+        correctAnswer:
+          type: string
+        options:
+          type: array
+          items:
             type: string
-      required:
-        - userId
-        - totalLessonsCompleted
-        - totalXp
-        - streak
-        - languageProgress
-        - badges
-
-    LanguageProgress:
-      type: object
-      properties:
-        languageId:
-          type: string
-        languageName:
-          type: string
-        lessonsCompleted:
+        nativeScript:
+          type: ["string", "null"]
+        romanization:
+          type: ["string", "null"]
+        missedCount:
           type: integer
-        totalLessons:
-          type: integer
-      required:
-        - languageId
-        - languageName
-        - lessonsCompleted
-        - totalLessons
-
-    ReviewAction:
-      type: object
-      properties:
-        userId:
-          type: string
-      required:
-        - userId
 
     LeaderboardEntry:
       type: object
+      required: [rank, userId, name, xp, streak]
       properties:
+        rank:
+          type: integer
         userId:
-          type: string
+          type: integer
         name:
           type: string
         xp:
           type: integer
-        rank:
+        streak:
           type: integer
-      required:
-        - userId
-        - name
-        - xp
-        - rank
+
+    MistakeInput:
+      type: object
+      required: [userId]
+      properties:
+        userId:
+          type: integer

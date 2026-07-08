@@ -5,12 +5,12 @@
  * IndiLingo — Indian regional language learning platform API
  * OpenAPI spec version: 0.1.0
  */
-import type { ExerciseType } from './exerciseType';
+import type { ReviewExerciseType } from './reviewExerciseType';
 
-export interface Exercise {
+export interface ReviewExercise {
   id: number;
   lessonId: number;
-  type: ExerciseType;
+  type: ReviewExerciseType;
   question: string;
   correctAnswer: string;
   options: string[];
@@ -18,4 +18,5 @@ export interface Exercise {
   nativeScript?: string | null;
   /** @nullable */
   romanization?: string | null;
+  missedCount: number;
 }
