@@ -23,7 +23,13 @@ import { Leaderboard } from '@/pages/Leaderboard';
 import { Review } from '@/pages/Review';
 import { Profile } from '@/pages/Profile';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 function Layout() {
   const [location] = useLocation();
